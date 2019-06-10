@@ -250,3 +250,15 @@ Representation:
 ```
 
 Form more details, see the [inline functions documentation](docs/v1/inline-functions.md). To create new inline functions, see the [creating inline function documentation](docs/v1/creating-inline-fn.md)
+
+## Maintainers and Contributors
+
+### Active Maintainers
+
+- Daniel Harasymiw <daniel.harasymiw@workiva.com>
+
+### Previous Contributors
+
+- Tyler Wilding <tyler.wilding@workiva.com>
+- Daniel Harasymiw <daniel.harasymiw@workiva.com>
+- Martin Kreibe <martin.kreibe@workiva.com>
