@@ -1,0 +1,1 @@
+mvn -o dependency:list | grep ":.*:.*" | cut -d] -f2- | sed 's/:[a-z]*$//g' | sed 's/\(.*\):/\1 : /' | sed 's/Finished.*//' | sed 's/.../   /' | sort -u | sed '1s/^/  versions:/' | perl -pi -e 'print "software:\n" if $. == 1' | sed 's/- maven.*//' > MANIFEST.yml

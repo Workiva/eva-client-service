@@ -1,0 +1,587 @@
+# NOTE: This Swagger file is for documentation of the API only, codegeneration from this
+# spec file has not been tested!
+
+# Swagger 3.0 is still under a lot of development in SwaggerUI
+# https://github.com/swagger-api/swagger-ui/issues/3641
+swagger: "2.0"
+info:
+  title: "Eva Client Service"
+  version: "1.1.0"
+  description: "Rich documentation for the API Endpoints provided by the Eva Client Service."
+host: "localhost:8080"
+basePath: "/eva/v.1"
+externalDocs:
+  description: "Additional Documentation on the Client Service can be Found Here"
+  url: "https://github.com/Workiva/eva-client-service"
+
+schemes:
+  - "http"
+
+tags:
+  -
+    name: "Peer Library"
+    description: "Supports Interactions With the EVA Peer Library"
+
+paths:
+  /q/{tenant}/{category}:
+    post:
+      tags:
+        - "Peer Library"
+      summary: "Executes a query against inputs"
+      description: |+
+        Additional documentation and comprehensive examples on this endpoint [can be found here.](https://github.com/Workiva/eva-client-service/blob/master/docs/v1/query.md)
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/vnd.eva+edn"
+      parameters:
+        - $ref: '#/components/parameters/common/correlationId'
+        - $ref: '#/components/parameters/common/tenant'
+        - $ref: '#/components/parameters/common/category'
+        - $ref: '#/components/parameters/query/attrQuery'
+        - $ref: "#/components/parameters/common/snapshotReferenceParam"
+      responses:
+        '200':
+          description: Success
+  /transact/{tenant}/{category}:
+    post:
+      tags:
+        - "Peer Library"
+      summary: "Writes the requested transaction to the Eva system"
+      description: |+
+        Additional documentation and comprehensive examples on this endpoint [can be found here.](https://github.com/Workiva/eva-client-service/blob/master/docs/v1/transact.md)
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/vnd.eva+edn"
+      parameters:
+        - $ref: '#/components/parameters/common/correlationId'
+        - $ref: '#/components/parameters/common/tenant'
+        - $ref: '#/components/parameters/common/category'
+        - $ref: '#/components/parameters/common/connectionReference'
+        - $ref: "#/components/parameters/transact/txData"
+      responses:
+        '200':
+          description: Success
+  /with/{tenant}/{category}:
+      post:
+        tags:
+        - "Peer Library"
+        summary: "Simulates a transaction locally without persisting the updated state."
+        description: |+
+          Additional documentation and comprehensive examples on this endpoint [can be found here.](https://github.com/Workiva/eva-client-service/blob/master/docs/v1/with.md)
+        consumes:
+          - "application/x-www-form-urlencoded"
+        produces:
+          - "application/vnd.eva+edn"
+        parameters:
+          - $ref: '#/components/parameters/common/correlationId'
+          - $ref: '#/components/parameters/common/tenant'
+          - $ref: '#/components/parameters/common/category'
+          - $ref: '#/components/parameters/common/connectionReference'
+          - $ref: "#/components/parameters/transact/txData"
+        responses:
+          '200':
+            description: Success
+  /pull/{tenant}/{category}:
+    post:
+      tags:
+        - "Peer Library"
+      summary: "Returns a hierarchical selection of attributes for one or more entities."
+      description: |+
+        Additional documentation and comprehensive examples on this endpoint [can be found here.](https://github.com/Workiva/eva-client-service/blob/master/docs/v1/pull.md)
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/vnd.eva+edn"
+      parameters:
+        - $ref: '#/components/parameters/common/correlationId'
+        - $ref: '#/components/parameters/common/tenant'
+        - $ref: '#/components/parameters/common/category'
+        - $ref: '#/components/parameters/common/snapshotReference'
+        - $ref: "#/components/parameters/pull/entityIds"
+        - $ref: "#/components/parameters/pull/pattern"
+      responses:
+        '200':
+          description: Success
+  /invoke/{tenant}/{category}:
+    post:
+      tags:
+        - "Peer Library"
+      summary: "Execute a particular function."
+      description: |+
+        Additional documentation and comprehensive examples on this endpoint [can be found here.](https://github.com/Workiva/eva-client-service/blob/master/docs/v1/invoke.md)
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/vnd.eva+edn"
+      parameters:
+        - $ref: '#/components/parameters/common/correlationId'
+        - $ref: '#/components/parameters/common/tenant'
+        - $ref: '#/components/parameters/common/category'
+        - $ref: '#/components/parameters/invoke/function'
+        - $ref: "#/components/parameters/common/snapshotReference"
+        - $ref: "#/components/parameters/invoke/casParam0"
+        - $ref: "#/components/parameters/invoke/casParam1"
+        - $ref: "#/components/parameters/invoke/casParam2"
+        - $ref: "#/components/parameters/invoke/casParam3"
+        - $ref: "#/components/parameters/invoke/casParam4"
+      responses:
+        '200':
+          description: Success
+  /datoms/{tenant}/{category}:
+    post:
+      tags:
+        - "Peer Library"
+      summary: "Provides raw access to the database indexes. Must pass the index-name. May pass one or more leading components of the index to constrain the results."
+      description: |+
+        Additional documentation and comprehensive examples on this endpoint [can be found here.](https://github.com/Workiva/eva-client-service/blob/master/docs/v1/datoms.md)
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/vnd.eva+edn"
+      parameters:
+        - $ref: '#/components/parameters/common/correlationId'
+        - $ref: '#/components/parameters/common/tenant'
+        - $ref: '#/components/parameters/common/category'
+        - $ref: '#/components/parameters/common/snapshotReference'
+        - $ref: "#/components/parameters/datoms/index"
+        - $ref: "#/components/parameters/datoms/components"
+      responses:
+        '200':
+          description: Success
+  /tx-range/{tenant}/{category}:
+    post:
+      tags:
+        - "Peer Library"
+      summary: "Returns the transaction log entries for the given or computed range."
+      description: |+
+        Additional documentation and comprehensive examples on this endpoint [can be found here.](https://github.com/Workiva/eva-client-service/blob/master/docs/v1/tx-range.md)
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/vnd.eva+edn"
+      parameters:
+        - $ref: '#/components/parameters/common/correlationId'
+        - $ref: '#/components/parameters/common/tenant'
+        - $ref: '#/components/parameters/common/category'
+        - $ref: '#/components/parameters/common/connectionReference'
+        - $ref: "#/components/parameters/tx-range/start"
+        - $ref: "#/components/parameters/tx-range/end"
+      responses:
+        '200':
+          description: Success
+  /latestT/{tenant}/{category}/{label}:
+    post:
+      tags:
+        - "Peer Library"
+      summary: "Returns the latest transaction number for a particular connection config."
+      deprecated: true
+      description: |+
+        Additional documentation and comprehensive examples on this endpoint [can be found here.](https://github.com/Workiva/eva-client-service/blob/master/docs/v1/latestT.md)
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/vnd.eva+edn"
+      parameters:
+        - $ref: '#/components/parameters/common/correlationId'
+        - $ref: '#/components/parameters/common/tenant'
+        - $ref: '#/components/parameters/common/category'
+        - $ref: '#/components/parameters/common/label'
+      responses:
+        '200':
+          description: Success
+  /latestT/{tenant}/{category}:
+    post:
+      tags:
+        - "Peer Library"
+      summary: "Returns the latest transaction number for a particular connection config."
+      description: |+
+        Additional documentation and comprehensive examples on this endpoint [can be found here.](https://github.com/Workiva/eva-client-service/blob/master/docs/v1/latestT.md)
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/vnd.eva+edn"
+      parameters:
+        - $ref: '#/components/parameters/common/correlationId'
+        - $ref: '#/components/parameters/common/tenant'
+        - $ref: '#/components/parameters/common/category'
+        - $ref: '#/components/parameters/common/connectionReference'
+      responses:
+        '200':
+          description: Success
+  /entid/{tenant}/{category}:
+    post:
+      tags:
+        - "Peer Library"
+      summary: "Coerces any entity-identifier into an entity-id. Does not confirm existence of an entity id, except incidentally through some coercion processes."
+      description: |+
+        Additional documentation and comprehensive examples on this endpoint [can be found here.](https://github.com/Workiva/eva-client-service/blob/master/docs/v1/entid.md)
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/vnd.eva+edn"
+      parameters:
+        - $ref: '#/components/parameters/common/correlationId'
+        - $ref: '#/components/parameters/common/tenant'
+        - $ref: '#/components/parameters/common/category'
+        - $ref: '#/components/parameters/common/snapshotReference'
+        - $ref: '#/components/parameters/entid/ident'
+        - $ref: '#/components/parameters/entid/strict'
+      responses:
+        '200':
+          description: Success
+  /ident/{tenant}/{category}:
+    post:
+      tags:
+        - "Peer Library"
+      summary: "Returns the keyword-identifier associated with an id."
+      description: |+
+        Additional documentation and comprehensive examples on this endpoint [can be found here.](https://github.com/Workiva/eva-client-service/blob/master/docs/v1/ident.md)
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/vnd.eva+edn"
+      parameters:
+        - $ref: '#/components/parameters/common/correlationId'
+        - $ref: '#/components/parameters/common/tenant'
+        - $ref: '#/components/parameters/common/category'
+        - $ref: '#/components/parameters/common/snapshotReference'
+        - $ref: '#/components/parameters/ident/entid'
+        - $ref: '#/components/parameters/ident/strict'
+      responses:
+        '200':
+          description: Success
+  /attribute/{tenant}/{category}:
+    post:
+      tags:
+        - "Peer Library"
+      summary: "Retrieves information about an Attribute."
+      description: |+
+        Additional documentation and comprehensive examples on this endpoint [can be found here.](https://github.com/Workiva/eva-client-service/blob/master/docs/v1/ident.md)
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/vnd.eva+edn"
+      parameters:
+        - $ref: '#/components/parameters/common/correlationId'
+        - $ref: '#/components/parameters/common/tenant'
+        - $ref: '#/components/parameters/common/category'
+        - $ref: '#/components/parameters/common/snapshotReference'
+        - $ref: '#/components/parameters/attribute/attrId'
+        - $ref: '#/components/parameters/attribute/strict'
+      responses:
+        '200':
+          description: Success
+  /extant-entity/{tenant}/{category}:
+    post:
+      tags:
+        - "Peer Library"
+      summary: "Returns true if there exists at least one datom in the database with the provided entity identifier."
+      description: |+
+        Additional documentation and comprehensive examples on this endpoint [can be found here.](https://github.com/Workiva/eva-client-service/blob/master/docs/v1/ident.md)
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/vnd.eva+edn"
+      parameters:
+        - $ref: '#/components/parameters/common/correlationId'
+        - $ref: '#/components/parameters/common/tenant'
+        - $ref: '#/components/parameters/common/category'
+        - $ref: '#/components/parameters/common/snapshotReference'
+        - $ref: '#/components/parameters/extant-entity/ident'
+      responses:
+        '200':
+          description: Success
+  /status/{tenant}/{category}:
+    post:
+      tags:
+        - "Peer Library"
+      summary: "Returns status information on a particular Connection."
+      deprecated: true
+      description: |+
+        Additional documentation and comprehensive examples on this endpoint [can be found here.](https://github.com/Workiva/eva-client-service/blob/master/docs/v1/ident.md)
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/vnd.eva+edn"
+      parameters:
+        - $ref: '#/components/parameters/common/correlationId'
+        - $ref: '#/components/parameters/common/tenant'
+        - $ref: '#/components/parameters/common/category'
+        - $ref: '#/components/parameters/common/label'
+      responses:
+        '200':
+          description: Success
+
+components:
+  parameters:
+    common:
+      correlationId:
+        in: header
+        description: Used to correlate logs and traces together across services in searches
+        name: _cid
+        type: string
+        required: false
+      tenant: # Can be referenced via '#/components/parameters/tenant'
+        name: tenant
+        in: path
+        description: The tenant portion of the Catalog's connection configuration map
+        required: true
+        example: "test-tenant"
+        schema:
+          type: string
+      category: # Can be referenced via '#/components/parameters/category'
+        name: category
+        in: path
+        description: The category portion of the Catalog's connection configuration map
+        required: true
+        example: "test-category"
+        schema:
+          type: string
+      label: # Can be referenced via '#/components/parameters/label'
+        name: label
+        in: path
+        description: The label portion of the Catalog's connection configuration map
+        required: true
+        example: "test-label"
+        schema:
+          type: string
+      connectionReference:
+        in: formData
+        name: reference
+        type: string
+        description: The [ConnectionReference](https://github.com/Workiva/eva-client-service#connection-reference)
+        required: true
+        example: '#eva.client.service/connection-ref { :label "test-label" }'
+        schema:
+          type: string
+      snapshotReference:
+        in: formData
+        name: reference
+        type: string # Can probably reference a custom type here
+        description: The [SnapshotReference](https://github.com/Workiva/eva-client-service#snapshot-reference)
+        required: true
+        example: '#eva.client.service/snapshot-ref { :label "test-label" }'
+        schema:
+          type: string
+    query:
+      attrQuery:
+        in: formData
+        name: query
+        type: string
+        description: Query string
+        required: true
+        example: '[:find ?attr :where [_ :db/ident ?attr]]'
+        schema:
+          type: string
+      snapshotReferenceParam:
+        in: formData
+        name: p[0]
+        type: string # Can probably reference a custom type here
+        description: The [SnapshotReference](https://github.com/Workiva/eva-client-service#snapshot-reference)
+        example: '#eva.client.service/snapshot-ref { :label "test-label" }'
+        schema:
+          type: string
+    transact:
+      txData:
+        in: formData
+        name: transaction
+        type: string
+        description: The transaction data
+        required: true
+        example: '[
+          {:db/id #db/id [:db.part/user]
+          :db/ident :book/title
+          :db/doc "Title of a book"
+          :db/valueType :db.type/string
+          :db/cardinality :db.cardinality/one
+          :db.install/_attribute :db.part/db}
+
+          {:db/id #db/id [:db.part/user]
+          :db/ident :book/year_published
+          :db/doc "Date book was published"
+          :db/valueType :db.type/long
+          :db/cardinality :db.cardinality/one
+          :db.install/_attribute :db.part/db}
+
+          {:db/id #db/id [:db.part/user]
+          :db/ident :book/author
+          :db/doc "Author of a book"
+          :db/valueType :db.type/ref
+          :db/cardinality :db.cardinality/one
+          :db.install/_attribute :db.part/db}
+
+          {:db/id #db/id [:db.part/user]
+          :db/ident :author/name
+          :db/doc "Name of author"
+          :db/valueType :db.type/string
+          :db/cardinality :db.cardinality/one
+          :db.install/_attribute :db.part/db}
+          ]'
+        schema:
+          type: string
+    pull:
+      entityIds:
+        in: formData
+        name: ids
+        type: string
+        description: A single or list of entity ids.
+        required: true
+        example: "0"
+        schema:
+          type: string
+      entityId:
+        in: formData
+        name: id
+        type: string
+        description: A single entity id.
+        required: true
+        example: "8796093023236"
+        schema:
+          type:
+            string
+      pattern:
+        in: formData
+        name: pattern
+        type: string
+        description: Specify which attributes should be returned
+        required: true
+        example: "[*]"
+        schema:
+          type: string
+    invoke:
+      function:
+        in: formData
+        name: function
+        type: string
+        description: The function name
+        required: true
+        example: ":db.fn/cas"
+        schema:
+          type: string
+      casParam0:
+        in: formData
+        name: p[0]
+        type: string
+        description: 'Param 0: The [SnapshotReference](https://github.com/Workiva/eva-client-service#snapshot-reference)'
+        example: '#eva.client.service/snapshot-ref { :label "test-label" }'
+        schema:
+          type: string
+      casParam1:
+        in: formData
+        name: p[1]
+        type: string
+        description: 'Param 1: The entity id'
+        example: '0'
+        schema:
+          type: string
+      casParam2:
+        in: formData
+        name: p[2]
+        type: string
+        description: 'Param 2: The attribute'
+        example: ':db/doc'
+        schema:
+          type: string
+      casParam3:
+        in: formData
+        name: p[3]
+        type: string
+        description: 'Param 3: The old value'
+        example: '"The default database partition."'
+        schema:
+          type: string
+      casParam4:
+        in: formData
+        name: p[4]
+        type: string
+        description: 'Param 4: The new value'
+        example: '"Testing"'
+        schema:
+          type: string
+    datoms:
+      index:
+        name: index
+        in: formData
+        description: The index to be searched.
+        required: true
+        example: ":eavt"
+        type: string
+        enum: [":eavt", ":aevt", ":avet", ":vaet"]
+      components:
+        name: components
+        in: formData
+        description: A list of datom components to be used to narrow down the search.
+        required: true
+        example: "[]"
+        type: string
+    tx-range:
+      start:
+        name: start
+        in: formData
+        description: The starting tx number.
+        required: true
+        example: 0
+        type: integer
+      end:
+        name: end
+        in: formData
+        description: The ending tx number, not inclusive, if omitted will use the value returned by latest-t + 1.
+        required: false
+        example: 1
+        type: integer
+    entid:
+      ident:
+        name: ident
+        in: formData
+        description: The id to be perform entid with.
+        required: true
+        example: ":db/doc"
+        type: string
+      strict:
+        name: strict
+        in: formData
+        description: Whether or not to throw an exception if the entid is not found.
+        required: false
+        example: false
+        type: boolean
+    ident:
+      entid:
+        name: entid
+        in: formData
+        description: The id to be perform ident with.
+        required: true
+        example: ":db/doc"
+        type: string
+      strict:
+        name: strict
+        in: formData
+        description: Whether or not to throw an exception if the ident is not found.
+        required: false
+        example: false
+        type: boolean
+    attribute:
+      attrId:
+        name: entid
+        in: formData
+        description: The id of the attribute in question.
+        required: true
+        example: ":db/doc"
+        type: string
+      strict:
+        name: strict
+        in: formData
+        description: Whether or not to throw an error if nothing is found.
+        required: false
+        example: false
+        type: boolean
+    extant-entity:
+      ident:
+        name: entid
+        in: formData
+        description: The entity identifier.
+        required: true
+        example: ":db/doc"
+        type: string
+
