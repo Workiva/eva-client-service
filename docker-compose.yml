@@ -1,13 +1,10 @@
 version: '3.6'
 services:
-# TODO - add eva-catalog / eva compose to this file and debug
+# TODO - add eva-catalog / eva compose to this file and integration test
   eva-client-service:
     image: ${SKYNET_APPLICATION_EVA_CLIENT_SERVICE:-drydock.workiva.net/workiva/eva-client-service:latest-release}
-    depends_on:
-      - eva-catalog
-      - eva
     environment:
-      - CATALOG_URL=http://eva-catalog:3000
+      - CATALOG_URL=LOCAL
       - LOGBACK_APPENDER=STDOUT
       - SANITIZE_EXCEPTIONS=false
       - TRACE_RECORDER=off
