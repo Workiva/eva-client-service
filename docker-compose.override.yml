@@ -1,5 +1,0 @@
-version: '3.6'
-services:
-  eva-client-service:
-    ports:
-      - 8080:8080
