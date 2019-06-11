@@ -82,6 +82,12 @@
             <version>0.34.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+
         <!-- Workiva Dependencies -->
         <dependency>
             <groupId>com.workiva</groupId>
@@ -89,8 +95,8 @@
             <version>2.0.1</version>
         </dependency>
         <dependency>
-            <groupId>com.workiva</groupId>
-            <artifactId>eva-catalog</artifactId>
+            <groupId>com.workiva.eva.catalog</groupId>
+            <artifactId>client.alpha</artifactId>
             <version>2.0.1</version>
         </dependency>
         <dependency>

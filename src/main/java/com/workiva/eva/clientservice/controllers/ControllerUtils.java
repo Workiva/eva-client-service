@@ -14,9 +14,9 @@
 
 package com.workiva.eva.clientservice.controllers;
 
-import ichnaie.TracingContext;
 import com.codahale.metrics.MetricRegistry;
 import eva.error.v1.EvaException;
+import ichnaie.TracingContext;
 import io.opentracing.util.GlobalTracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

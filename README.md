@@ -19,6 +19,9 @@ The Eva client service is an Eva peer which exposes Eva functionality to other l
     + [Connection Reference](#connection-reference)
     + [Snapshot Reference](#snapshot-reference)
   * [Inline Functions](#inline-functions)
+- [Maintainers and Contributors](#maintainers-and-contributors)
+  * [Active Maintainers](#active-maintainers)
+  * [Previous Contributors](#previous-contributors)
 
 <!-- tocstop -->
 
