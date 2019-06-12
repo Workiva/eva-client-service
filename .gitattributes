@@ -1,0 +1,4 @@
+# Data Files
+*.json linguist-generated
+
+*.hbs linguist-vendored=true

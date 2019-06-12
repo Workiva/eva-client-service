@@ -1,0 +1,1577 @@
+{
+	"info": {
+		"_postman_id": "93e65610-2399-4d24-8a13-dbeee28f4927",
+		"name": "EVA-Client-Service - Additional Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "ident",
+			"item": [
+				{
+					"name": "Basic ident Call for :db/ident - Non-Strict",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b310a1fe-bbc5-469f-a1ec-030b3411b244",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 500ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);",
+									"});",
+									"",
+									"pm.test(\"Body matches string\", function () {",
+									"    pm.expect(pm.response.text()).to.equal(\":db/ident\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.eva+edn"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "reference",
+									"value": "#eva.client.service/snapshot-ref {\n   :label \"{{label}}\"\n}",
+									"type": "text"
+								},
+								{
+									"key": "entid",
+									"value": "3",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/eva/v.1/ident/{{tenant}}/{{category}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"eva",
+								"v.1",
+								"ident",
+								"{{tenant}}",
+								"{{category}}"
+							]
+						},
+						"description": "Call the `ident` function on Entity-ID `3` which corresponds to `:db/ident`"
+					},
+					"response": []
+				},
+				{
+					"name": "Basic ident Call for :db/ident - Strict",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b310a1fe-bbc5-469f-a1ec-030b3411b244",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 500ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);",
+									"});",
+									"",
+									"pm.test(\"Body matches string\", function () {",
+									"    pm.expect(pm.response.text()).to.equal(\":db/ident\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.eva+edn"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "reference",
+									"value": "#eva.client.service/snapshot-ref {\n   :label \"{{label}}\"\n}",
+									"type": "text"
+								},
+								{
+									"key": "entid",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "strict",
+									"value": "true",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/eva/v.1/ident/{{tenant}}/{{category}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"eva",
+								"v.1",
+								"ident",
+								"{{tenant}}",
+								"{{category}}"
+							]
+						},
+						"description": "Call the `ident` function on Entity-ID `3` which corresponds to `:db/ident`. If nothing is found, an error will be thrown rather than returning `nil`"
+					},
+					"response": []
+				},
+				{
+					"name": "Basic ident Call for Non-Existant ident - Non-Strict",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b310a1fe-bbc5-469f-a1ec-030b3411b244",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 500ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);",
+									"});",
+									"",
+									"pm.test(\"Body matches string\", function () {",
+									"    pm.expect(pm.response.text()).to.equal(\"nil\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.eva+edn"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "reference",
+									"value": "#eva.client.service/snapshot-ref {\n   :label \"{{label}}\"\n}",
+									"type": "text"
+								},
+								{
+									"key": "entid",
+									"value": "-1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/eva/v.1/ident/{{tenant}}/{{category}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"eva",
+								"v.1",
+								"ident",
+								"{{tenant}}",
+								"{{category}}"
+							]
+						},
+						"description": "Call `ident` on Entity ID `-1` which does not correspond to anything.  `nil` will be returned."
+					},
+					"response": []
+				},
+				{
+					"name": "Basic ident Call for Non-Existant ident - Strict",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b310a1fe-bbc5-469f-a1ec-030b3411b244",
+								"exec": [
+									"pm.test(\"Status code is 500\", function () {",
+									"    pm.response.to.have.status(500);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 500ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);",
+									"});",
+									"",
+									"pm.test(\"Body matches string\", function () {",
+									"    pm.expect(pm.response.text()).to.include(\"Failed to coerce value\");",
+									"    pm.expect(pm.response.text()).to.include(\"CoercionFailure\");",
+									"    pm.expect(pm.response.text()).to.include(\":code 3900\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.eva+edn"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "reference",
+									"value": "#eva.client.service/snapshot-ref {\n   :label \"{{label}}\"\n}",
+									"type": "text"
+								},
+								{
+									"key": "entid",
+									"value": "-1",
+									"type": "text"
+								},
+								{
+									"key": "strict",
+									"value": "true",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/eva/v.1/ident/{{tenant}}/{{category}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"eva",
+								"v.1",
+								"ident",
+								"{{tenant}}",
+								"{{category}}"
+							]
+						},
+						"description": "Call `ident` on Entity ID `-1` which does not correspond to anything.  An exception will be thrown."
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "5ce9cc08-58b9-4656-b152-06ae522cecf3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "957edcb3-38b8-4e23-ada1-19c3cabcabba",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "attribute",
+			"item": [
+				{
+					"name": "Basic attribute Call for :db/doc - Non-Strict",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "39a57f89-0d54-4eec-a74d-4103041d10ee",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 500ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);",
+									"});",
+									"",
+									"pm.test(\"Body matches string\", function () {",
+									"    pm.expect(pm.response.text()).to.include(\":ident :db/doc\")",
+									"    pm.expect(pm.response.text()).to.include(\"A docstring for the given entity.\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.eva+edn"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "reference",
+									"value": "#eva.client.service/snapshot-ref {\n   :label \"{{label}}\"\n}",
+									"type": "text"
+								},
+								{
+									"key": "attrId",
+									"value": ":db/doc",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/eva/v.1/attribute/{{tenant}}/{{category}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"eva",
+								"v.1",
+								"attribute",
+								"{{tenant}}",
+								"{{category}}"
+							]
+						},
+						"description": "Call `attribute` with attribute ID `:db/doc`"
+					},
+					"response": []
+				},
+				{
+					"name": "Basic attribute Call for :db/doc - Strict",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "39a57f89-0d54-4eec-a74d-4103041d10ee",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 500ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);",
+									"});",
+									"",
+									"pm.test(\"Body matches string\", function () {",
+									"    pm.expect(pm.response.text()).to.include(\":ident :db/doc\")",
+									"    pm.expect(pm.response.text()).to.include(\"A docstring for the given entity.\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.eva+edn"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "reference",
+									"value": "#eva.client.service/snapshot-ref {\n   :label \"{{label}}\"\n}",
+									"type": "text"
+								},
+								{
+									"key": "attrId",
+									"value": ":db/doc",
+									"type": "text"
+								},
+								{
+									"key": "strict",
+									"value": "true",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/eva/v.1/attribute/{{tenant}}/{{category}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"eva",
+								"v.1",
+								"attribute",
+								"{{tenant}}",
+								"{{category}}"
+							]
+						},
+						"description": "Call `attribute` with attribute ID `:db/doc`.  If nothing is found, an error will be thrown."
+					},
+					"response": []
+				},
+				{
+					"name": "Basic attribute Call for Non-Existant attribute - Non-Strict",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "39a57f89-0d54-4eec-a74d-4103041d10ee",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 500ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);",
+									"});",
+									"",
+									"pm.test(\"Body matches string\", function () {",
+									"    pm.expect(pm.response.text()).to.equal(\"nil\")",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.eva+edn"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "reference",
+									"value": "#eva.client.service/snapshot-ref {\n   :label \"{{label}}\"\n}",
+									"type": "text"
+								},
+								{
+									"key": "attrId",
+									"value": ":db/nope",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/eva/v.1/attribute/{{tenant}}/{{category}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"eva",
+								"v.1",
+								"attribute",
+								"{{tenant}}",
+								"{{category}}"
+							]
+						},
+						"description": "Call `attribute` with attribute ID `:db/nope` which does not correspond got anything. `nil` will be returned."
+					},
+					"response": []
+				},
+				{
+					"name": "Basic attribute Call for Non-Existant attribute - Strict",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "39a57f89-0d54-4eec-a74d-4103041d10ee",
+								"exec": [
+									"pm.test(\"Status code is 500\", function () {",
+									"    pm.response.to.have.status(500);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 500ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);",
+									"});",
+									"",
+									"pm.test(\"Body matches string\", function () {",
+									"    pm.expect(pm.response.text()).to.include(\"CoercionFailure\")",
+									"    pm.expect(pm.response.text()).to.include(\"Failed to coerce value\");",
+									"    pm.expect(pm.response.text()).to.include(\":code 3900\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.eva+edn"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "reference",
+									"value": "#eva.client.service/snapshot-ref {\n   :label \"{{label}}\"\n}",
+									"type": "text"
+								},
+								{
+									"key": "attrId",
+									"value": ":db/nope",
+									"type": "text"
+								},
+								{
+									"key": "strict",
+									"value": "true",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/eva/v.1/attribute/{{tenant}}/{{category}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"eva",
+								"v.1",
+								"attribute",
+								"{{tenant}}",
+								"{{category}}"
+							]
+						},
+						"description": "Call `attribute` with attribute ID `:db/nope` which does not correspond got anything. An error will be thrown."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "extant-entity",
+			"item": [
+				{
+					"name": "Basic extant-entity Call for :db/doc",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "39a57f89-0d54-4eec-a74d-4103041d10ee",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 500ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);",
+									"});",
+									"",
+									"pm.test(\"Body matches string\", function () {",
+									"    pm.expect(pm.response.text()).to.equal(\"true\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.eva+edn"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "reference",
+									"value": "#eva.client.service/snapshot-ref {\n   :label \"{{label}}\"\n}",
+									"type": "text"
+								},
+								{
+									"key": "ident",
+									"value": ":db/doc",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/eva/v.1/extant-entity/{{tenant}}/{{category}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"eva",
+								"v.1",
+								"extant-entity",
+								"{{tenant}}",
+								"{{category}}"
+							]
+						},
+						"description": "Check if an entity exists in the database that uses the `:db/doc` identifier."
+					},
+					"response": []
+				},
+				{
+					"name": "Basic extant-entity Call for Non-Existant ident",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "39a57f89-0d54-4eec-a74d-4103041d10ee",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 500ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);",
+									"});",
+									"",
+									"pm.test(\"Body matches string\", function () {",
+									"    pm.expect(pm.response.text()).to.equal(\"false\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.eva+edn"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "reference",
+									"value": "#eva.client.service/snapshot-ref {\n   :label \"{{label}}\"\n}",
+									"type": "text"
+								},
+								{
+									"key": "ident",
+									"value": ":db/nope",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/eva/v.1/extant-entity/{{tenant}}/{{category}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"eva",
+								"v.1",
+								"extant-entity",
+								"{{tenant}}",
+								"{{category}}"
+							]
+						},
+						"description": "Check if an entity exists in the database that uses the `:db/nope` identifier, which there is not one."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "API Version List",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "40a6de3e-3c05-40f9-a346-33d2c84c68e1",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(`[\"v.1\"]`);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "389a48cb-414a-48b6-b71f-c0831e14ab1f",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.eva+edn"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/eva/versions",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"eva",
+						"versions"
+					]
+				},
+				"description": "Get a list of the supported versions of the client-service API."
+			},
+			"response": []
+		},
+		{
+			"name": "[nodocs] Status",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5856ced3-bcdb-404e-be3a-802baa2e6a7f",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Body is correct\", function () {",
+							"    var resp = pm.response.text().slice(1, -1);",
+							"    pm.expect(resp.match(/(:latestT.*\\d)/g).length).to.be.above(0);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.eva+edn"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/eva/v.1/status/{{tenant}}/{{category}}/{{label}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"eva",
+						"v.1",
+						"status",
+						"{{tenant}}",
+						"{{category}}",
+						"{{label}}"
+					]
+				},
+				"description": "Calls the Status Endpoint"
+			},
+			"response": []
+		},
+		{
+			"name": "Health",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5856ced3-bcdb-404e-be3a-802baa2e6a7f",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"pm.test(\"Body is correct\", function () {",
+							"    var resp = pm.response.text();",
+							"    pm.expect(resp).to.eql('{\"status\":\"UP\"}');",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/actuator/health",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"actuator",
+						"health"
+					]
+				},
+				"description": "Calls the Status Endpoint"
+			},
+			"response": []
+		},
+		{
+			"name": "LatestT",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1efaf93d-83f8-407e-8c7a-6f5a31113f16",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"pm.test(\"Body is correct\", function () {",
+							"    var resp = pm.response.text();",
+							"    pm.expect(resp.match(/\\d+/g).length).to.eql(1);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.eva+edn",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/eva/v.1/latestT/{{tenant}}/{{category}}/{{label}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"eva",
+						"v.1",
+						"latestT",
+						"{{tenant}}",
+						"{{category}}",
+						"{{label}}"
+					]
+				},
+				"description": "Calls `latestT` Deprecated."
+			},
+			"response": []
+		},
+		{
+			"name": "Transact Schema - In-Memory 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "de9d8766-dd0f-4223-b814-08417683ffb8",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\":tempids\");",
+							"    pm.expect(pm.response.text()).to.include(\":db-before\");",
+							"    pm.expect(pm.response.text()).to.include(\":tx-data\");",
+							"    pm.expect(pm.response.text()).to.include(\":db-after\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.eva+edn"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "reference",
+							"value": "#eva.client.service/connection-ref {\n  :label \"test-label\"\n}",
+							"type": "text"
+						},
+						{
+							"key": "transaction",
+							"value": "[\n{:db/id #db/id [:db.part/user]\n :db/ident :book/title\n :db/doc \"Title of a book\"\n :db/valueType :db.type/string\n :db/cardinality :db.cardinality/one\n :db.install/_attribute :db.part/db}\n\n{:db/id #db/id [:db.part/user]\n :db/ident :book/year_published\n :db/doc \"Date book was published\"\n :db/valueType :db.type/long\n :db/cardinality :db.cardinality/one\n :db.install/_attribute :db.part/db}\n\n{:db/id #db/id [:db.part/user]\n :db/ident :book/author\n :db/doc \"Author of a book\"\n :db/valueType :db.type/ref\n :db/cardinality :db.cardinality/one\n :db.install/_attribute :db.part/db}\n\n{:db/id #db/id [:db.part/user]\n :db/ident :author/name\n :db/doc \"Name of author\"\n :db/valueType :db.type/string\n :db/cardinality :db.cardinality/one\n :db.install/_attribute :db.part/db}\n ]",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/eva/v.1/transact/test-tenant/test-category",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"eva",
+						"v.1",
+						"transact",
+						"test-tenant",
+						"test-category"
+					]
+				},
+				"description": "The response of a successful transact is a map with four keys, :db-before, :db-after, :tempids, and :tx-data. :db-before and :db-after contains snapshots of the database before and after the transaction. :tempids contains a mapping of temporary ids that occurred as part of the transaction to their corresponding permanent ids. :tx-data contains the individual #datom vectors that were inserted into the database."
+			},
+			"response": []
+		},
+		{
+			"name": "Make Second DB - Should have no Schema",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9632255a-7464-444b-82cc-0531c3014496",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.not.include(\":author/name\");",
+							"    pm.expect(pm.response.text()).to.not.include(\":book/year_published\");",
+							"    pm.expect(pm.response.text()).to.not.include(\":book/author\");",
+							"    pm.expect(pm.response.text()).to.not.include(\":book/title\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.eva+edn"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "query",
+							"value": "[:find ?attr\n :where [_ :db/ident ?attr]]",
+							"type": "text"
+						},
+						{
+							"key": "p[0]",
+							"value": "#eva.client.service/snapshot-ref {\n  :label \"test-label-2\"\n}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/eva/v.1/q/test-tenant-2/test-category-2",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"eva",
+						"v.1",
+						"q",
+						"test-tenant-2",
+						"test-category-2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "With (simulated transaction) Schema - In-Memory 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "de9d8766-dd0f-4223-b814-08417683ffb8",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\":tempids\");",
+							"    pm.expect(pm.response.text()).to.include(\":db-before\");",
+							"    pm.expect(pm.response.text()).to.include(\":tx-data\");",
+							"    pm.expect(pm.response.text()).to.include(\":db-after\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.eva+edn"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "reference",
+							"value": "#eva.client.service/connection-ref {\n  :label \"test-label-2\"\n}",
+							"type": "text"
+						},
+						{
+							"key": "transaction",
+							"value": "[\n{:db/id #db/id [:db.part/user]\n :db/ident :book/title\n :db/doc \"Title of a book\"\n :db/valueType :db.type/string\n :db/cardinality :db.cardinality/one\n :db.install/_attribute :db.part/db}\n\n{:db/id #db/id [:db.part/user]\n :db/ident :book/year_published\n :db/doc \"Date book was published\"\n :db/valueType :db.type/long\n :db/cardinality :db.cardinality/one\n :db.install/_attribute :db.part/db}\n\n{:db/id #db/id [:db.part/user]\n :db/ident :book/author\n :db/doc \"Author of a book\"\n :db/valueType :db.type/ref\n :db/cardinality :db.cardinality/one\n :db.install/_attribute :db.part/db}\n\n{:db/id #db/id [:db.part/user]\n :db/ident :author/name\n :db/doc \"Name of author\"\n :db/valueType :db.type/string\n :db/cardinality :db.cardinality/one\n :db.install/_attribute :db.part/db}\n ]",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/eva/v.1/with/test-tenant-2/test-category-2",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"eva",
+						"v.1",
+						"with",
+						"test-tenant-2",
+						"test-category-2"
+					]
+				},
+				"description": "The response of a successful `with` is a map with the same four keys as transact."
+			},
+			"response": []
+		},
+		{
+			"name": "Check Schema on second DB",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a4f2030f-ea12-4ddb-812a-db9d4094a9b9",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 200ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);",
+							"});",
+							"",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.not.include(\":author/name\");",
+							"    pm.expect(pm.response.text()).to.not.include(\":book/year_published\");",
+							"    pm.expect(pm.response.text()).to.not.include(\":book/author\");",
+							"    pm.expect(pm.response.text()).to.not.include(\":book/title\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.eva+edn"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "query",
+							"value": "[:find ?attr\n :where [_ :db/ident ?attr]]",
+							"type": "text"
+						},
+						{
+							"key": "p[0]",
+							"value": "#eva.client.service/snapshot-ref {\n  :label \"test-label-2\"\n}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/eva/v.1/q/test-tenant-2/test-category-2",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"eva",
+						"v.1",
+						"q",
+						"test-tenant-2",
+						"test-category-2"
+					]
+				},
+				"description": "Check schema after `with` call to ensure tx-data was not durably persisted."
+			},
+			"response": []
+		},
+		{
+			"name": "Entity",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d9eca3b1-7c37-420e-98d9-0ec5a959fd28",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"[[:db.part/tx]]\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.eva+edn"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "query",
+							"value": "[:find ?ident\n :in $ ?my-ident\n :where [?my-ident :db/ident ?ident]]",
+							"type": "text"
+						},
+						{
+							"key": "p[0]",
+							"value": "#eva.client.service/snapshot-ref {\n  :label \"{{label}}\"\n}",
+							"type": "text"
+						},
+						{
+							"key": "p[1]",
+							"value": "#eva.client.service/inline { \n  :fn ident\n  :params [\n    #eva.client.service/snapshot-ref {\n      :label \"{{label}}\"\n    }\n    1\n  ]\n}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/eva/v.1/q/{{tenant}}/{{category}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"eva",
+						"v.1",
+						"q",
+						"{{tenant}}",
+						"{{category}}"
+					]
+				},
+				"description": "Next is the query, [:find ?b :where [?b :book/title \"First Book\"]]. There is a lot to take in here so we'll break it down piece-by-piece. First of all, every query you write needs to be wrapped in a vector ([...]). The query starts with the :find keyword followed by a number of logic variables (lvar for short) denoted with a ?. The :where clause follows and, similarly to SQL, is used to restrict the query results.\n\nThe tuple [?b :book/title \"First Book\"] is called a data pattern. All querying is essentially matching that pattern to the datom 5-tuple we discussed earlier ([eid attr val tx added?]). In this case we are asking for all of the entity ids (?b) which have the attribute :book/title with value \"First Book\". What about tx and added?, why don't they appear in the clause? Simply, if not present they are replaced with implicit blanks. Expanding the tuple to its full form would yield, [?b :book/title \"First Book\" _ _]. We'll talk more about blanks later."
+			},
+			"response": []
+		},
+		{
+			"name": "Inline Function - ffirst",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d9eca3b1-7c37-420e-98d9-0ec5a959fd28",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"[[:db.part/tx]]\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.eva+edn"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "query",
+							"value": "[:find ?ident\n :in $ ?my-ident\n :where [?my-ident :db/ident ?ident]]",
+							"type": "text"
+						},
+						{
+							"key": "p[0]",
+							"value": "#eva.client.service/snapshot-ref {\n  :label \"{{label}}\"\n}",
+							"type": "text"
+						},
+						{
+							"key": "p[1]",
+							"value": "#eva.client.service/inline { \n  :fn ident\n  :params [\n    #eva.client.service/snapshot-ref {\n      :label \"{{label}}\"\n    }\n    1\n  ]\n}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/eva/v.1/q/{{tenant}}/{{category}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"eva",
+						"v.1",
+						"q",
+						"{{tenant}}",
+						"{{category}}"
+					]
+				},
+				"description": "ffirst inline function gets the first item of the first item of a collection."
+			},
+			"response": []
+		},
+		{
+			"name": "Query with SyncDb",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0e060d2a-1388-4dee-a59e-4ae1a6c9b456",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"pm.test(\"Body is correct\", function () {",
+							"    var resp = pm.response.text().slice(1, -1);",
+							"    pm.expect(resp.match(/(\\[\\d*\\])/g).length).to.be.above(0);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.eva+edn"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "query",
+							"value": "[:find ?b \n :in $ ?t \n :where [?b :book/title ?t]]",
+							"type": "text"
+						},
+						{
+							"key": "p[0]",
+							"value": "#eva.client.service/snapshot-ref {\n  :label \"{{label}}\"\n}",
+							"type": "text"
+						},
+						{
+							"key": "p[1]",
+							"value": "\"First Book\"",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/eva/{{ver}}/q/{{tenant}}/{{category}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"eva",
+						"{{ver}}",
+						"q",
+						"{{tenant}}",
+						"{{category}}"
+					]
+				},
+				"description": "Next is the query, [:find ?b :where [?b :book/title \"First Book\"]]. There is a lot to take in here so we'll break it down piece-by-piece. First of all, every query you write needs to be wrapped in a vector ([...]). The query starts with the :find keyword followed by a number of logic variables (lvar for short) denoted with a ?. The :where clause follows and, similarly to SQL, is used to restrict the query results.\n\nThe tuple [?b :book/title \"First Book\"] is called a data pattern. All querying is essentially matching that pattern to the datom 5-tuple we discussed earlier ([eid attr val tx added?]). In this case we are asking for all of the entity ids (?b) which have the attribute :book/title with value \"First Book\". What about tx and added?, why don't they appear in the clause? Simply, if not present they are replaced with implicit blanks. Expanding the tuple to its full form would yield, [?b :book/title \"First Book\" _ _]. We'll talk more about blanks later."
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "fbfac627-42b4-4af6-b8ec-83b8e44b6d82",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "5c0a1c3d-48d5-46db-bce4-c0e725ea2ead",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

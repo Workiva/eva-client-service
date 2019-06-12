@@ -1,0 +1,1122 @@
+{
+	"info": {
+		"_postman_id": "8dca8721-aed7-43a7-937d-3b8b8a04351b",
+		"name": "EVA-Client-Service - EVA 101",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Transact  Book Schema",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c6e12775-8e17-45d1-bc51-418497c0de29",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\":tempids\");",
+							"    pm.expect(pm.response.text()).to.include(\":db-before\");",
+							"    pm.expect(pm.response.text()).to.include(\":tx-data\");",
+							"    pm.expect(pm.response.text()).to.include(\":db-after\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.eva+edn"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "reference",
+							"value": "#eva.client.service/connection-ref {\n  :label \"{{label}}\"\n}",
+							"type": "text"
+						},
+						{
+							"key": "transaction",
+							"value": "[\n  {:db/id #db/id [:db.part/user]\n   :db/ident :book/title\n   :db/doc \"Title of a book\"\n   :db/valueType :db.type/string\n   :db/cardinality :db.cardinality/one\n   :db.install/_attribute :db.part/db}\n\n  {:db/id #db/id [:db.part/user]\n   :db/ident :book/year_published\n   :db/doc \"Date book was published\"\n   :db/valueType :db.type/long\n   :db/cardinality :db.cardinality/one\n   :db.install/_attribute :db.part/db}\n  \n  {:db/id #db/id [:db.part/user]\n   :db/ident :book/author\n   :db/doc \"Author of a book\"\n   :db/valueType :db.type/ref\n   :db/cardinality :db.cardinality/one\n   :db.install/_attribute :db.part/db}\n  \n  {:db/id #db/id [:db.part/user]\n   :db/ident :author/name\n   :db/doc \"Name of author\"\n   :db/valueType :db.type/string\n   :db/cardinality :db.cardinality/one\n   :db.install/_attribute :db.part/db}\n]",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/eva/{{ver}}/transact/{{tenant}}/{{category}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"eva",
+						"{{ver}}",
+						"transact",
+						"{{tenant}}",
+						"{{category}}"
+					]
+				},
+				"description": "The response of a successful transact is a map with four keys, `:db-before`, `:db-after`, `:tempids`, and `:tx-data`. `:db-before` and `:db-after` contains snapshots of the database before and after the transaction. `:tempids` contains a mapping of temporary ids that occurred as part of the transaction to their corresponding permanent ids. `:tx-data` contains the individual #datom vectors that were inserted into the database."
+			},
+			"response": []
+		},
+		{
+			"name": "Add First Book",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "192525c4-1d3a-49f1-8e49-147bfc777147",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\":tempids\");",
+							"    pm.expect(pm.response.text()).to.include(\":db-before\");",
+							"    pm.expect(pm.response.text()).to.include(\":tx-data\");",
+							"    pm.expect(pm.response.text()).to.include(\":db-after\");",
+							"    ",
+							"    pm.expect(pm.response.text()).to.include(\"Billy Baroo\");",
+							"    pm.expect(pm.response.text()).to.include(\"First Book\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.eva+edn"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "reference",
+							"value": "#eva.client.service/connection-ref {\n  :label \"{{label}}\"\n}",
+							"type": "text"
+						},
+						{
+							"key": "transaction",
+							"value": "[\n  [:db/add #db/id [:db.part/user] :book/title \"First Book\"]\n  [:db/add #db/id [:db.part/tx] :author/name \"Billy Baroo\"]\n]",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/eva/{{ver}}/transact/{{tenant}}/{{category}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"eva",
+						"{{ver}}",
+						"transact",
+						"{{tenant}}",
+						"{{category}}"
+					]
+				},
+				"description": "This variable will transact a single fact, which we call a datom, into the database. All datoms are made up of the 5-tuple, `[eid attr val tx added?]`. In this case, `eid` corresponds to `(eva/tempid :db.part/user)`, `attr` -> `:book/title`, and `val` -> `\"First Book\"`. `tx` and `added?` are filled in for us implicitly. `tx` refers to the id of the transaction entity that is created as part of every successful transaction and `added?` is simply a boolean value indicating whether this fact was added or retracted. A `datom` is the smallest unit of data that can be manipulated in the database.\n\n`:db/add` is the keyword used to indicate an upsertion `(insert/update)` of data. Unlike our schema, `:db/id` is not required here as it is implicit when adding data in list form (more on that later). Instead of the db partition, which we used for our schema, we now use the `:db.part/user` partition."
+			},
+			"response": []
+		},
+		{
+			"name": "Query for the First Book",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0e060d2a-1388-4dee-a59e-4ae1a6c9b456",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"pm.test(\"Body is correct\", function () {",
+							"    var resp = pm.response.text().slice(1, -1);",
+							"    pm.expect(resp.match(/(\\[\\d*\\])/g).length).to.be.above(0);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.eva+edn"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "query",
+							"value": "[:find ?b\n :in $ ?t\n :where [?b :book/title ?t]]",
+							"type": "text"
+						},
+						{
+							"key": "p[0]",
+							"value": "#eva.client.service/snapshot-ref {\n  :label \"{{label}}\"\n}",
+							"type": "text"
+						},
+						{
+							"key": "p[1]",
+							"value": "\"First Book\"",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/eva/{{ver}}/q/{{tenant}}/{{category}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"eva",
+						"{{ver}}",
+						"q",
+						"{{tenant}}",
+						"{{category}}"
+					]
+				},
+				"description": "Next is the query, `[:find ?b :where [?b :book/title \"First Book\"]]`. There is a lot to take in here so we'll break it down piece-by-piece. First of all, every query you write needs to be wrapped in a vector `([...])`. The query starts with the `:find` keyword followed by a number of logic variables (`lvar` for short) denoted with a `?`. The `:where` clause follows and, similarly to SQL, is used to restrict the query results.\n\nThe tuple `[?b :book/title \"First Book\"]` is called a data pattern. All querying is essentially matching that pattern to the datom 5-tuple we discussed earlier (`[eid attr val tx added?]`). In this case we are asking for all of the entity ids (`?b`) which have the attribute `:book/title` with value `\"First Book\"`. What about `tx` and `added?`, why don't they appear in the clause? Simply, if not present they are replaced with implicit blanks. Expanding the tuple to its full form would yield, `[?b :book/title \"First Book\" _ _]`. We'll talk more about blanks later."
+			},
+			"response": []
+		},
+		{
+			"name": "Add Several Books",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "74c08121-c63b-4c9b-9404-dc5e20a72247",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\":tempids\");",
+							"    pm.expect(pm.response.text()).to.include(\":db-before\");",
+							"    pm.expect(pm.response.text()).to.include(\":tx-data\");",
+							"    pm.expect(pm.response.text()).to.include(\":db-after\");",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.eva+edn"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "reference",
+							"value": "#eva.client.service/connection-ref {\n  :label \"{{label}}\"\n}",
+							"type": "text"
+						},
+						{
+							"key": "transaction",
+							"value": "[\n  {:db/id #db/id [:db.part/user -1]\n   :author/name \"Martin Kleppman\"}\n  {:db/id #db/id [:db.part/user -2]\n   :book/title \"Designing Data-Intensive Applications\"\n   :book/year_published 2017\n   :book/author #db/id[:db.part/user -1]}\n\n  {:db/id #db/id [:db.part/user -3]\n   :author/name \"Aurelien Geron\"}\n  {:db/id #db/id [:db.part/user -4]\n   :book/title \"Hands-On Machine Learning\"\n   :book/year_published 2017\n   :book/author #db/id[ :db.part/user -3]}\n\n  {:db/id #db/id [:db.part/user -5]\n   :author/name \"Wil van der Aalst\"}\n  {:db/id #db/id [:db.part/user -6]\n   :book/title \"Process Mining: Data Science in Action\"\n   :book/year_published 2016\n   :book/author #db/id[ :db.part/user -5]}\n  {:db/id #db/id [:db.part/user -7]\n   :book/title \"Modeling Business Processes: A Petri-Net Oriented Approach\"\n   :book/year_published 2011\n   :book/author #db/id[ :db.part/user -5]}\n\n  {:db/id #db/id [:db.part/user -8]\n   :author/name \"Edward Tufte\"}\n  {:db/id #db/id [:db.part/user -9]\n   :book/title \"The Visual Display of Quantitative Information\"\n   :book/year_published 2001\n   :book/author #db/id[ :db.part/user -8]}\n  {:db/id #db/id [:db.part/user -10]\n   :book/title \"Envisioning Information\"\n   :book/year_published 1990\n   :book/author #db/id[ :db.part/user -8]}\n\n  {:db/id #db/id [:db.part/user -11]\n   :author/name \"Ramez Elmasri\"}\n  {:db/id #db/id [:db.part/user -12]\n   :book/title \"Operating Systems: A Spiral Approach\"\n   :book/year_published 2009\n   :book/author #db/id[ :db.part/user -11]}\n  {:db/id #db/id [:db.part/user -13]\n   :book/title \"Fundamentals of Database Systems\"\n   :book/year_published 2006\n   :book/author #db/id[ :db.part/user -11]}\n\n  {:db/id #db/id [:db.part/user -14]\n   :author/name \"Steve McConnell\"}\n  {:db/id #db/id [:db.part/user -15]\n   :book/title \"Code Complete: A Practical Handbook of Software Construction\"\n   :book/year_published 2004\n   :book/author #db/id[:db.part/user -14]}\n  {:db/id #db/id [:db.part/user -16]\n   :book/title \"Software Estimation: Demystifying the Black Art\"\n   :book/year_published 2006\n   :book/author #db/id[ :db.part/user -14]}\n  {:db/id #db/id [:db.part/user -17]\n   :book/title \"Rapid Development: Taming Wild Software Schedules\"\n   :book/year_published 1996\n   :book/author #db/id[:db.part/user -14]}\n  {:db/id #db/id [:db.part/user -18]\n   :book/title \"Software Project Survival Guide\"\n   :book/year_published 1997\n   :book/author #db/id[ :db.part/user -14]}\n  {:db/id #db/id [:db.part/user -19]\n   :book/title \"After the Gold Rush: Creating a True Profession of Software Engineering\"\n   :book/year_published 1999\n   :book/author #db/id[ :db.part/user -14]}\n  \n  {:db/id #db/id [:db.part/user -20]\n   :author/name \"Don Miguel Ruiz\"}\n  {:db/id #db/id [:db.part/user -21]\n   :book/title \"The Four Agreements: A Practical Guide to Personal Freedom\"\n   :book/year_published 2011\n   :book/author #db/id[ :db.part/user -20]}\n  \n  {:db/id #db/id [:db.part/user -22]\n   :author/name \"Charles Petzold\"}\n  {:db/id #db/id [:db.part/user -23]\n   :book/title \"Code: The Hidden Language of Computer Hardware and Software\"\n   :book/year_published 2000\n   :book/author #db/id[ :db.part/user -22]}\n  \n  {:db/id #db/id [:db.part/user -24]\n   :author/name \"Anil Maheshwari\"}\n  {:db/id #db/id [:db.part/user -25]\n   :book/title \"Data Analytics Made Accessible\"\n   :book/year_published 2014\n   :book/author #db/id[ :db.part/user -24]}\n\n  {:db/id #db/id [:db.part/user -26]\n   :author/name \"Jeremy Anderson\"}\n  {:db/id #db/id [:db.part/user -27]\n   :book/title \"Professional Clojure\"\n   :book/year_published 2016\n   :book/author #db/id[:db.part/user -26]}\n]",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/eva/{{ver}}/transact/{{tenant}}/{{category}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"eva",
+						"{{ver}}",
+						"transact",
+						"{{tenant}}",
+						"{{category}}"
+					]
+				},
+				"description": "In the above, we define two vectors (dataset and dataset2) of maps containing data that we will transact into the database. One thing you might notice is that we omitted the `:db/add` keyword entirely. When you are transacting a single piece of data in a list, as we did above, you are limited to adding or retracting a specific fact about an entity. When transacting data in a map, the `:db/add` is implied and you can include any number of attribute/value pairs. Obviously the map form method is preferable when transacting larger amounts of data.\n\nAnother thing worth mentioning is that we are now passing a negative number as the second argument to all of our eva/tempid calls. Given the same partition and negative number, each invocation will return the same temporary id. The reason we do this is so that we can use that tempid to add references between entities in a single transaction. In this example we are using the tempid for the author entity as the reference value for the `:book/author` attribute."
+			},
+			"response": []
+		},
+		{
+			"name": "Find all books published in 2017",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "bccc0080-0669-470e-a02c-75a37d7ae2fd",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"pm.test(\"Body is correct\", function () {",
+							"    pm.response.to.have.body(`[[\"Designing Data-Intensive Applications\"] [\"Hands-On Machine Learning\"]]`);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.eva+edn"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "query",
+							"value": "[:find ?title\n :where [?b :book/year_published 2017]\n        [?b :book/title ?title]]",
+							"type": "text"
+						},
+						{
+							"key": "p[0]",
+							"value": "#eva.client.service/snapshot-ref {\n  :label \"{{label}}\"\n}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/eva/{{ver}}/q/{{tenant}}/{{category}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"eva",
+						"{{ver}}",
+						"q",
+						"{{tenant}}",
+						"{{category}}"
+					]
+				},
+				"description": "In this example, we use a logic variable `?title` to find the title of books released in `1990`. One interesting thing to note about this query is that `?b` is used twice. When a logic variable is used more than once it must represent the same entity in every clause in order to satisfy the set of clauses. This is also referred to as unification. In SQL, this is roughly equivalent to joining the years and titles on the shared entity ids."
+			},
+			"response": []
+		},
+		{
+			"name": "Find author ID of \"Designing Data-Intensive Applications\"",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "86d6369e-f630-48b4-bf6c-bf3f2c7464e6",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"pm.test(\"Body is correct\", function () {",
+							"    var resp = pm.response.text().slice(1, -1);",
+							"    pm.expect(resp.match(/(\\[\\d*\\])/g).length).to.be.above(0);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.eva+edn"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "query",
+							"value": "[:find ?a\n :where [?b :book/title \"Designing Data-Intensive Applications\"]\n        [?b :book/author ?a]]",
+							"type": "text"
+						},
+						{
+							"key": "p[0]",
+							"value": "#eva.client.service/snapshot-ref {\n  :label \"{{label}}\"\n} ",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/eva/{{ver}}/q/{{tenant}}/{{category}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"eva",
+						"{{ver}}",
+						"q",
+						"{{tenant}}",
+						"{{category}}"
+					]
+				},
+				"description": "In this query we are following a relationship from a book to its author, and then finding and returning the entity ID of the author. We bind the logic variable `?a` to the entity id of the author associated with the book."
+			},
+			"response": []
+		},
+		{
+			"name": "Find author name of \"Designing Data-Intensive Applications\"",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "00dfb03e-7979-4382-ac7a-ec0f0c4c0cb2",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"pm.test(\"Body is correct\", function () {",
+							"    pm.response.to.have.body(`[[\"Martin Kleppman\"]]`);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.eva+edn"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "query",
+							"value": "[:find ?name\n :where [?b :book/title \"Designing Data-Intensive Applications\"]\n        [?b :book/author ?a]\n        [?a :author/name ?name]]",
+							"type": "text"
+						},
+						{
+							"key": "p[0]",
+							"value": "#eva.client.service/snapshot-ref {\n  :label \"{{label}}\"\n} ",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/eva/{{ver}}/q/{{tenant}}/{{category}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"eva",
+						"{{ver}}",
+						"q",
+						"{{tenant}}",
+						"{{category}}"
+					]
+				},
+				"description": "In this query we are following a relationship from a book to its author, and then finding and returning the name of the author. We bind the logic variable `?a` to the entity id of the author associated with the book. Then we use that entity id to get the name of the actual author."
+			},
+			"response": []
+		},
+		{
+			"name": "Find books from authored by \"Steve McConnell\"",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "cfb8c0fd-5340-4d23-b848-71b9aaf7c51f",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"pm.test(\"Body is correct\", function () {",
+							"    pm.response.to.have.body(`[[\"Code Complete: A Practical Handbook of Software Construction\"] [\"Software Estimation: Demystifying the Black Art\"] [\"Software Project Survival Guide\"] [\"After the Gold Rush: Creating a True Profession of Software Engineering\"] [\"Rapid Development: Taming Wild Software Schedules\"]]`);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.eva+edn"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "query",
+							"value": "[:find ?books\n :where [?b :book/title ?books]\n        [?b :book/author ?a]\n        [?a :author/name \"Steve McConnell\"]]",
+							"type": "text"
+						},
+						{
+							"key": "p[0]",
+							"value": "#eva.client.service/snapshot-ref {\n  :label \"{{label}}\"\n} ",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/eva/{{ver}}/q/{{tenant}}/{{category}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"eva",
+						"{{ver}}",
+						"q",
+						"{{tenant}}",
+						"{{category}}"
+					]
+				},
+				"description": "We can just as easily reverse the previous query and get all of the books published by a certain author."
+			},
+			"response": []
+		},
+		{
+			"name": "Pull First Book By ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c7231986-bff0-4533-bb55-9ad6a47ede66",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(`:book/title \"First Book\"`);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.eva+edn"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "reference",
+							"value": "#eva.client.service/snapshot-ref {\n  :label \"{{label}}\"\n} ",
+							"type": "text"
+						},
+						{
+							"key": "ids",
+							"value": "8796093023236",
+							"type": "text"
+						},
+						{
+							"key": "pattern",
+							"value": "[*]",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/eva/{{ver}}/pull/{{tenant}}/{{category}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"eva",
+						"{{ver}}",
+						"pull",
+						"{{tenant}}",
+						"{{category}}"
+					]
+				},
+				"description": "Up to this point we have been querying data by unifying individual values after our `:find` clause to those in our `:where` clause. Using the Pull API, we can make the following call (replace eid with the result of our very first query (Add First Book).\n\nThe Pull API expects a db as its first argument, similar to how we pass db to our queries. The second argument `[*]` is a pattern, where you can specify which attributes you would like to have returned. Using `*` as your pattern indicates you want all of the attributes for this particular entity. The final argument is the id of the entity you are trying to get."
+			},
+			"response": []
+		},
+		{
+			"name": "Query All Book Names",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "591b233e-c519-4aea-a151-0c72642eb81a",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"pm.test(\"Body is correct\", function () {",
+							"    pm.response.to.have.body(`[[\"Code Complete: A Practical Handbook of Software Construction\"] [\"The Four Agreements: A Practical Guide to Personal Freedom\"] [\"Designing Data-Intensive Applications\"] [\"Hands-On Machine Learning\"] [\"Software Estimation: Demystifying the Black Art\"] [\"Code: The Hidden Language of Computer Hardware and Software\"] [\"Modeling Business Processes: A Petri-Net Oriented Approach\"] [\"Process Mining: Data Science in Action\"] [\"Operating Systems: A Spiral Approach\"] [\"Envisioning Information\"] [\"Data Analytics Made Accessible\"] [\"Rapid Development: Taming Wild Software Schedules\"] [\"Fundamentals of Database Systems\"] [\"The Visual Display of Quantitative Information\"] [\"Professional Clojure\"] [\"Software Project Survival Guide\"] [\"First Book\"] [\"After the Gold Rush: Creating a True Profession of Software Engineering\"]]`);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.eva+edn"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "query",
+							"value": "[:find ?name\n :where [_ :book/title ?name]]",
+							"type": "text"
+						},
+						{
+							"key": "p[0]",
+							"value": "#eva.client.service/snapshot-ref {\n  :label \"{{label}}\"\n} ",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/eva/{{ver}}/q/{{tenant}}/{{category}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"eva",
+						"{{ver}}",
+						"q",
+						"{{tenant}}",
+						"{{category}}"
+					]
+				},
+				"description": "Instead of using a logic variable to bind the id of a book entity we simply use `_`. The underscore is equivalent to a wildcard and will match anything, so every entity id for this attribute will be returned by the query."
+			},
+			"response": []
+		},
+		{
+			"name": "Determine when a book was transacted to the database",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "555cb79d-00ea-4ef5-8513-b71056a1de68",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"#inst\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.eva+edn"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "query",
+							"value": "[:find ?timestamp\n :where [_ :book/title \"Process Mining: Data Science in Action\" ?tx]\n        [?tx :db/txInstant ?timestamp]]",
+							"type": "text"
+						},
+						{
+							"key": "p[0]",
+							"value": "#eva.client.service/snapshot-ref {\n  :label \"{{label}}\"\n} ",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/eva/{{ver}}/q/{{tenant}}/{{category}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"eva",
+						"{{ver}}",
+						"q",
+						"{{tenant}}",
+						"{{category}}"
+					]
+				},
+				"description": "Whenever you transact data into Eva, a transaction entity is created as well. The transaction entity contains the instant (timestamp) a transaction is committed, which is useful to know in some circumstances.\n\nIt is an important realization that `:db` keywords can be queried the same way as user-defined schema. Another thing in the above example that may look weird is that we have four arguments in one of our datom clauses where previously we've only used three. Remember that the datom is a 5-tuple `[eid attr val tx added?]`. In this case `?tx` binds to the tx portion of the datom, which is what we are trying to query for."
+			},
+			"response": []
+		},
+		{
+			"name": "Find titles and publish years for books published prior to 2005",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "05ca03bd-bb5a-432f-8ca6-ae4d3924e72b",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"pm.test(\"Body is correct\", function () {",
+							"    pm.response.to.have.body(`[[\"After the Gold Rush: Creating a True Profession of Software Engineering\" 1999] [\"Code Complete: A Practical Handbook of Software Construction\" 2004] [\"The Visual Display of Quantitative Information\" 2001] [\"Code: The Hidden Language of Computer Hardware and Software\" 2000] [\"Rapid Development: Taming Wild Software Schedules\" 1996] [\"Software Project Survival Guide\" 1997] [\"Envisioning Information\" 1990]]`);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.eva+edn"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "query",
+							"value": "[:find ?book ?year\n :where [?b :book/title ?book]\n        [?b :book/year_published ?year]\n        [(< ?year 2005)]]",
+							"type": "text"
+						},
+						{
+							"key": "p[0]",
+							"value": "#eva.client.service/snapshot-ref {\n  :label \"{{label}}\"\n} ",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/eva/{{ver}}/q/{{tenant}}/{{category}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"eva",
+						"{{ver}}",
+						"q",
+						"{{tenant}}",
+						"{{category}}"
+					]
+				},
+				"description": "The `(< ?year 2005)` clause is called a predicate, and filters the result set to only include the results which satisfy the predicate. Any Clojure function or Java method can be used as a predicate."
+			},
+			"response": []
+		},
+		{
+			"name": "Find books published in the years before than “Software Project Survival Guide”",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "33d732d2-3e17-47bf-975c-8e8ed40190d0",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"pm.test(\"Body is correct\", function () {",
+							"    pm.response.to.have.body(`[[\"Rapid Development: Taming Wild Software Schedules\" 1996] [\"Envisioning Information\" 1990]]`);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.eva+edn"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "query",
+							"value": "[:find ?book ?y1\n :where [?b1 :book/title ?book]\n        [?b1 :book/year_published ?y1]\n        [?b2 :book/title \"Software Project Survival Guide\"]\n        [?b2 :book/year_published ?y2]\n        [(< ?y1 ?y2)]]",
+							"type": "text"
+						},
+						{
+							"key": "p[0]",
+							"value": "#eva.client.service/snapshot-ref {\n  :label \"{{label}}\"\n} ",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/eva/{{ver}}/q/{{tenant}}/{{category}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"eva",
+						"{{ver}}",
+						"q",
+						"{{tenant}}",
+						"{{category}}"
+					]
+				},
+				"description": "Another usage of predicate functions."
+			},
+			"response": []
+		},
+		{
+			"name": "Find the Oldest Book",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4b06d0a4-5de1-4c6b-8b96-e2713c223e20",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"pm.test(\"Body is correct\", function () {",
+							"    pm.response.to.have.body(`[[1990]]`);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.eva+edn"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "query",
+							"value": "[:find (min ?year)\n :where [_ :book/year_published ?year]]",
+							"type": "text"
+						},
+						{
+							"key": "p[0]",
+							"value": "#eva.client.service/snapshot-ref {\n  :label \"{{label}}\"\n} ",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/eva/{{ver}}/q/{{tenant}}/{{category}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"eva",
+						"{{ver}}",
+						"q",
+						"{{tenant}}",
+						"{{category}}"
+					]
+				},
+				"description": "What if we want to find the oldest or the newest book? Datalog supports a number of aggregate functions, including `min`, `max`, `avg` and `sum`."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Books with Rules",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "aae643dc-5fc3-4d5e-b033-0fb84ca8e10c",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"pm.test(\"Body is correct\", function () {",
+							"    pm.response.to.have.body(`[[\"Wil van der Aalst\"]]`);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.eva+edn"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "query",
+							"value": "[:find ?name\n :in $ %\n :where (book-author \"Modeling Business Processes: A Petri-Net Oriented Approach\" ?name)]",
+							"type": "text"
+						},
+						{
+							"key": "p[1]",
+							"value": "[[(book-author ?book ?name)\n [?b :book/title ?book]\n [?b :book/author ?a]\n [?a :author/name ?name]]]",
+							"type": "text"
+						},
+						{
+							"key": "p[0]",
+							"value": "#eva.client.service/snapshot-ref {\n  :label \"{{label}}\"\n} ",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/eva/{{ver}}/q/{{tenant}}/{{category}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"eva",
+						"{{ver}}",
+						"q",
+						"{{tenant}}",
+						"{{category}}"
+					]
+				},
+				"description": "Throughout this tutorial, if we wanted to the get the author for a particular book we'd need to write the same two where clauses every time. This gets old really fast, and can get quite tedious for more complicated queries. Rules offer a way to abstract away reusable components of a query.\n\nWe've created a rule in this example called book-author. The part contained within the first vector `(...)` is called the head of the rule, containing the name and any logic variables. The rest of the rule looks exactly like the where clauses we've seen up to this point. The `?book` and `?name` variables can be used for both input and output. For example, if you provide a value for `?book` the output will be the author of that book. Vice versa, if you provide a value for `?name` you will get back the titles of all the books for that author. If you provide a value for neither `?book` or `?name` the query will return all the possible combinations in the database. To use a rule in a query firstly we need to pass the rule into the `:in` clause using the `%` symbol. Secondly we call the rule in one of our `:where` clauses like `(book-author \"Modeling Business Processes: A Petri-Net Oriented Approach\" ?name)`."
+			},
+			"response": []
+		}
+	]
+}

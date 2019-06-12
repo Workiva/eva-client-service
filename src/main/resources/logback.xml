@@ -1,0 +1,33 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%X] [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Dependency / Library logger configuration -->
+    <logger name="org.apache.http" level="${DEP_LOGBACK_LOG_LEVEL:-OFF}" />
+    <!-- Header and Wire logging should always be OFF unless we're debugging
+         a deep problem. Wire logging in particular will log out the entire
+         contents of the HTTP requests and responses, which is a security issue. -->
+    <logger name="org.apache.http.headers" level="${DEP_LOGBACK_LOG_LEVEL:-OFF}" />
+    <logger name="org.apache.http.wire" level="${DEP_LOGBACK_LOG_LEVEL:-OFF}" />
+    <logger name="com.mchange.v2.c3p0.impl.AbstractPoolBackedDataSource" level="${DEP_LOGBACK_LOG_LEVEL:-OFF}" />
+
+    <logger name="org.catalina" level="${DEP_LOGBACK_LOG_LEVEL:-ERROR}" />
+    <logger name="org.apache.activemq" level="${DEP_LOGBACK_LOG_LEVEL:-ERROR}" />
+    <logger name="org.apache.commons" level="${DEP_LOGBACK_LOG_LEVEL:-ERROR}" />
+    <logger name="org.apache.tomcat" level="${DEP_LOGBACK_LOG_LEVEL:-ERROR}" />
+    <logger name="org.hibernate" level="${DEP_LOGBACK_LOG_LEVEL:-ERROR}" />
+    <logger name="org.springframework" level="${DEP_LOGBACK_LOG_LEVEL:-ERROR}" />
+
+    <!-- EVA Specific logger configuration -->
+    <logger name="eva" level="${EVA_LOGBACK_LOG_LEVEL:-WARN}" />
+
+    <!-- Client Service logger configuration -->
+    <logger name="com.workiva.eva.clientservice.*" level="${LOGBACK_LOG_LEVEL:-INFO}" />
+
+    <root level="${LOGBACK_LOG_LEVEL:-INFO}">
+        <appender-ref ref="${LOGBACK_APPENDER:-SOCKET}" />
+    </root>
+</configuration>

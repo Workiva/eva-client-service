@@ -1,0 +1,68 @@
+name: eva_client_service_eva_functional_tests
+
+image: drydock.workiva.net/workiva/smithy-runner-generator:340896
+
+contact: Daniel Harasymiw <daniel.harasymiw@workiva.com>
+
+description: Hits the client service with the EVA examples
+
+run:
+  on-pull-request: true
+  when-branch-name-is: .+
+
+requires:
+  Workiva/eva-client-service: docker
+  Workiva/eva-catalog: docker
+  Workiva/eva: docker
+
+scripts:
+  # Add nvm-npm package directory to path
+  - export PATH=$PATH:$(npm get prefix)/bin
+  # Grab Newman to run
+  - npm install -g newman newman-reporter-html &>/shared/logs/npm-install.log
+
+  # Spin up Docker containers
+  - >-
+     docker-compose -f docker-compose.yml
+     -f docker-compose.skynet.override.yml
+     up -d
+
+  # Capture Docker Logs
+  - >-
+     docker-compose -f docker-compose.yml
+     -f docker-compose.skynet.override.yml
+     logs -f > /shared/logs/docker-compose.log &
+
+  # Wait for service to start up
+  - >-
+     wget -q -O /dev/stdout --tries=30 --wait=2
+     --retry-connrefused
+     --content-on-error
+     http://eva-client-service:8080/eva/versions
+
+  # Run Postman Test Suites
+  - >-
+     newman run docs/postman/v1/colls/EVA_101.postman_collection.json
+     -e docs/postman/v1/envs/tests/EVA_101_Functional.postman_environment.json
+     --reporters cli,html
+     --reporter-html-export /shared/results/postman_results_101.html
+     --reporter-html-template=docs/postman/template/template-include-body.hbs
+
+  - >-
+     newman run docs/postman/v1/colls/EVA_102.postman_collection.json
+     -e docs/postman/v1/envs/tests/EVA_102_Functional.postman_environment.json
+     --reporters cli,html --reporter-html-export /shared/results/postman_results_102.html
+     --reporter-html-template=docs/postman/template/template-include-body.hbs
+
+  - >-
+     newman run docs/postman/v1/colls/EVA_Additional_Tests.postman_collection.json
+     -e docs/postman/v1/envs/tests/EVA_101_Functional.postman_environment.json
+     --reporters cli,html
+     --reporter-html-export /shared/results/postman_results_additional_tests.html
+     --reporter-html-template=docs/postman/template/template-include-body.hbs
+
+timeout: eternal
+
+artifacts:
+- /shared/logs
+- /shared/results

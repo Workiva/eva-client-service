@@ -1,0 +1,18 @@
+title: Client Service
+base: github:Workiva/eva-client-service/
+src: README.md
+topics:
+  - title: API
+    topics: 
+      - title: v1
+        topics:
+        - title: Query
+          src: docs/v1/query.md
+        - title: Transact
+          src: docs/v1/transact.md
+        - title: Pull
+          src: docs/v1/pull.md
+        - title: Invoke
+          src: docs/v1/invoke.md
+        - title: Status
+          src: docs/v1/status.md
