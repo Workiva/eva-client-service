@@ -42,3 +42,4 @@ compose_remote*
 src/main/clojure/eva/clientservice/aot-hook.clj
 _site/
 Gemfile.lock
+node_modules/

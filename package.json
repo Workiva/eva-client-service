@@ -1,0 +1,25 @@
+{
+  "name": "eva-client-service",
+  "version": "1.0.0",
+  "description": "The Eva client service is an Eva peer which exposes Eva functionality to other languages through a _REST_ interface. This model allows developers to work with EVA in non-JVM languages, removes the need to deploy a peer cluster and uncouple their database from their applications. The service also allows for multi-database queries, cross database referencing and prevents multiple round trips for these types of calls. Furthermore, only one service will need to be scaled, and the interface is standard so multiple services can utilize the same client service.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Workiva/eva-client-service.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/Workiva/eva-client-service/issues"
+  },
+  "homepage": "https://github.com/Workiva/eva-client-service#readme",
+  "dependencies": {
+    "markdown-toc": "^1.2.0"
+  }
+}

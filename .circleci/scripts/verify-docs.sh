@@ -13,7 +13,7 @@ MD5_ROOT_README_BEFORE=$(find README.md -type f -exec $md5Command {} \; | sort -
 MD5_DOCS_BEFORE=$(find ./docs -type f -exec $md5Command {} \; | sort -k 2 | $md5Command)
 
 # Update Table of Contents
-./scripts/update-tocs.sh
+./.circleci/scripts/update-tocs.sh
 
 # Calculate Later
 MD5_ROOT_README_AFTER=$(find README.md -type f -exec $md5Command {} \; | sort -k 2 | $md5Command)
@@ -22,14 +22,14 @@ MD5_DOCS_AFTER=$(find ./docs -type f -exec $md5Command {} \; | sort -k 2 | $md5C
 # Verify root README.md
 if [ "$MD5_ROOT_README_BEFORE" != "$MD5_ROOT_README_AFTER" ]; then
   printf "${RED}Aborting, parent README file TOC was not updated${NC}\n"
-  printf "${RED}Run ./scripts/update-tocs.sh${NC}\n"
+  printf "${RED}Run ./.circleci/scripts/update-tocs.sh${NC}\n"
   exit 1
 fi
 
 # Verify ./docs content
 if [ "$MD5_DOCS_BEFORE" != "$MD5_DOCS_AFTER" ]; then
   printf "${RED}Aborting, ./docs TOC(s) were not updated${NC}\n"
-  printf "${RED}Run the ./scripts/update-tocs.sh${NC}\n"
+  printf "${RED}Run ./.circleci/scripts/update-tocs.sh${NC}\n"
   exit 1
 fi
 
@@ -39,6 +39,6 @@ MD5_DOCS_AFTER=$(find ./docs -type f -exec $md5Command {} \; | sort -k 2 | $md5C
 
 if [ "$MD5_DOCS_BEFORE" != "$MD5_DOCS_AFTER" ]; then
   printf "${RED}Aborting, ./docs postman documentation was not regenerated${NC}\n"
-  printf "${RED}Run the ./scripts/update-postman-docs.sh${NC}\n"
+  printf "${RED}Run ./scripts/ci/update-postman-docs.sh${NC}\n"
   exit 1
 fi

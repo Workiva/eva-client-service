@@ -74,4 +74,4 @@ test:
 	mvn -Dcheckstyle.skip test
 
 update-tocs:
-	./scripts/update-tocs.sh
+	./.circleci/scripts/update-tocs.sh

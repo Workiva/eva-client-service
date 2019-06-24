@@ -21,11 +21,8 @@ WORKDIR /build
 COPY . /build
 
 RUN apk add --update bash
-RUN npm config set unsafe-perm true
-
-RUN npm install -g markdown-toc
-
-RUN ./scripts/verify-docs.sh
+RUN npm install
+RUN ./.circleci/scripts/verify-docs.sh
 
 # Build Project
 FROM maven:3.6-jdk-8-alpine as build
@@ -37,7 +34,7 @@ ENV MAVEN_OPTS="-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4j
 ## Grab Pre-fetched Dependencies
 COPY --from=setup /root/.m2 /root/.m2
 ARG SKIP_TESTS
-RUN ./scripts/verify.sh
+RUN ./scripts/ci/verify.sh
 
 ## Linter Processes
 RUN mvn -B fmt:check -q
@@ -45,7 +42,7 @@ RUN mvn -B checkstyle:checkstyle -q
 
 ## Dependency Artifacts
 RUN apk add --update git perl
-RUN ./scripts/dependencies.sh
+RUN ./scripts/ci/dependencies.sh
 RUN mkdir -p /audit
 RUN cp ./MANIFEST.yml /audit/MANIFEST.yml
 RUN cp ./pom.xml /audit/pom.xml
@@ -59,11 +56,11 @@ ARG BUILD_ARTIFACTS_DOCUMENTATION=/build/eva-client-service-api-docs.tar.gz
 ## Upload Code-Coverage Report
 ARG GIT_COMMIT
 ARG GIT_BRANCH
-RUN ./scripts/codecov.sh
+RUN ./scripts/ci/codecov.sh
 ARG BUILD_ARTIFACTS_TEST_REPORTS=/build/target/surefire-reports/TEST-*.xml
 
 ## Produce Final JAR, AOT Compile EVA
-RUN ./scripts/aot-compile.sh
+RUN ./scripts/ci/aot-compile.sh
 RUN mvn package -DskipTests
 RUN mv ./target/*.jar ./eva-client-service.jar
 
@@ -83,8 +80,8 @@ LABEL authors="Tyler Wilding, Daniel Harasymiw"
 RUN apk add --update bash curl libc6-compat nss tomcat-native
 
 COPY --from=build /build/eva-client-service.jar /opt/eva-client-service.jar
-COPY --from=build /build/scripts/set-mem-constraints.sh /usr/local/bin/set-mem-constraints.sh
-COPY --from=build /build/scripts/run-service.sh /usr/local/bin/run-service.sh
+COPY ./scripts/image/set-mem-constraints.sh /usr/local/bin/set-mem-constraints.sh
+COPY ./scripts/image/run-service.sh /usr/local/bin/run-service.sh
 
 RUN chmod o+rx /opt/eva-client-service.jar
 RUN chmod o+rx /usr/local/bin/set-mem-constraints.sh
