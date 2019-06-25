@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
+<project xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.workiva.eva</groupId>
@@ -28,7 +28,6 @@
         <powermock.version>2.0.0-beta.5</powermock.version>
     </properties>
     <dependencies>
-
         <dependency>
             <groupId>org.clojure</groupId>
             <artifactId>clojure</artifactId>
@@ -224,7 +223,7 @@
             <plugin>
                 <groupId>com.theoryinpractise</groupId>
                 <artifactId>clojure-maven-plugin</artifactId>
-                <version>1.8.1</version>
+                <version>1.8.3</version>
                 <extensions>true</extensions>
                 <configuration>
                     <temporaryOutputDirectory>true</temporaryOutputDirectory>
