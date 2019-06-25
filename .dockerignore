@@ -15,7 +15,6 @@ creds/
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.ear
 *.zip

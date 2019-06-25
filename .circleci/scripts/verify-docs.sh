@@ -34,7 +34,8 @@ if [ "$MD5_DOCS_BEFORE" != "$MD5_DOCS_AFTER" ]; then
 fi
 
 # Regenerate Postman Documentation
-./scripts/update-postman-docs.sh
+./scripts/ci/update-postman-docs.sh
+./.circleci/scripts/update-tocs.sh
 MD5_DOCS_AFTER=$(find ./docs -type f -exec $md5Command {} \; | sort -k 2 | $md5Command)
 
 if [ "$MD5_DOCS_BEFORE" != "$MD5_DOCS_AFTER" ]; then

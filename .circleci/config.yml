@@ -27,7 +27,7 @@ jobs:
 
   bundle_dependencies:
     docker:
-      - image: circleci/openjdk:8u181-jdk
+      - image: circleci/openjdk:8u181-jdk-node
     working_directory: ~/build
     environment:
       MAVEN_OPTS: "-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
@@ -35,12 +35,19 @@ jobs:
       - restore_cache:
           keys:
             - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+            - v1-repo-
+      - restore_cache:
+          keys:
             - v1-dependencies-{{ checksum "pom.xml" }}
+            - v1-dependencies-
+      - restore_cache:
+          keys:
             - v1-node-dependencies-{{ checksum "package.json" }}
-      - run: mvn -B dependency:go-offline -q
+            - v1-node-dependencies-
+      - run: mvn dependency:go-offline
       - run: npm install
       - save_cache:
-          key: v1-dependencies-{{ checksum "project.clj" }}
+          key: v1-dependencies-{{ checksum "pom.xml" }}
           paths:
             - ~/.m2
       - save_cache:
@@ -56,8 +63,11 @@ jobs:
       - restore_cache:
           keys:
             - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-            - v1-dependencies-{{ checksum "project.clj" }}
+            - v1-repo-
+      - restore_cache:
+          keys:
             - v1-node-dependencies-{{ checksum "package.json" }}
+            - v1-node-dependencies-
       - run: ./.circleci/scripts/verify-docs.sh
 
   verify_license_headers:
@@ -68,7 +78,7 @@ jobs:
       - restore_cache:
           keys:
             - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-            - v1-dependencies-{{ checksum "project.clj" }}
+            - v1-repo-
       - run: ./.circleci/scripts/verify-license-headers.sh "clj" "^;; Copyright 2018-[0-9]{4} Workiva Inc.$" project.clj profiles.clj
       - run: ./.circleci/scripts/verify-license-headers.sh "java" "^// Copyright 2018-[0-9]{4} Workiva Inc.$"
 
@@ -82,8 +92,12 @@ jobs:
       - restore_cache:
           keys:
             - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-            - v1-dependencies-{{ checksum "project.clj" }}
-      - run: mvn -B fmt:check -q
+            - v1-repo-
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "pom.xml" }}
+            - v1-dependencies-
+      - run: mvn -B fmt:check
 
   lint_code:
     docker:
@@ -95,35 +109,51 @@ jobs:
       - restore_cache:
           keys:
             - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-            - v1-dependencies-{{ checksum "project.clj" }}
-      - run: mvn -B checkstyle:checkstyle -q
+            - v1-repo-
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "pom.xml" }}
+            - v1-dependencies-
+      - run: mvn -B checkstyle:check
 
   unit_tests:
     docker:
-      - image: circleci/openjdk:8u181-jdk
-    working_directory: ~/build
+      # TODO - some sort of problem with circleci's openjdk image, can't find clojure.lang.Compile class
+      # - image: circleci/openjdk:8u181-jdk
+      - image: maven:3.6-jdk-8-alpine
+    working_directory: /home/circleci/build
     environment:
       MAVEN_OPTS: "-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
     steps:
       - restore_cache:
           keys:
             - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-            - v1-dependencies-{{ checksum "project.clj" }}
-      - run: mvn -B test -q
+            - v1-repo-
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "pom.xml" }}
+            - v1-dependencies-
+      - run: cp -R /home/circleci/.m2 ~/
+      - run: mvn -B -Dcheckstyle.skip test
 
   build_jar:
     docker:
-      - image: circleci/openjdk:8u181-jdk
-    working_directory: ~/build
+      - image: maven:3.6-jdk-8-alpine
+    working_directory: /home/circleci/build
     environment:
       MAVEN_OPTS: "-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
     steps:
       - restore_cache:
           keys:
             - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-            - v1-dependencies-{{ checksum "project.clj" }}
+            - v1-repo-
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "pom.xml" }}
+            - v1-dependencies-
+      - run: cp -R /home/circleci/.m2 ~/
       - run: ./scripts/ci/aot-compile.sh
-      - run: mvn -B clean package -DskipTests
+      - run: mvn -B -DskipTests -Dcheckstyle.skip clean package
       - run: mkdir -p ./artifacts/jars
       - run: mv ./target/*.jar ./artifacts/jars/
       # Persist Service JAR
@@ -144,6 +174,7 @@ jobs:
       - restore_cache:
           keys:
             - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+            - v1-repo-
       - setup_remote_docker:
           docker_layer_caching: false
       - run: ./.circleci/scripts/verify-dockerfile.sh
@@ -156,18 +187,20 @@ jobs:
       - restore_cache:
           keys:
             - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+            - v1-repo-
       - setup_remote_docker:
           docker_layer_caching: false
       - attach_workspace:
           at: /tmp/workspace
       - run: mv /tmp/workspace/eva-client-service.jar ./eva-client-service.jar
-      - run: docker build -f service.Dockerfile -t workivadocker/eva-client-service:latest-release . # -t workivadocker/eva-client-service:$CIRCLE_TAG .
-      # - run: docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
-      # - run: docker push workivadocker/eva-client-service:latest-release
-      # - run: docker push workivadocker/eva-client-service:$CIRCLE_TAG
+      - run: ls -lh
+      - run: docker build -f service.Dockerfile -t workivadocker/eva-client-service:latest-release -t workivadocker/eva-client-service:$CIRCLE_TAG .
+      - run: docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
+      - run: docker push workivadocker/eva-client-service:latest-release
+      - run: docker push workivadocker/eva-client-service:$CIRCLE_TAG
 
 workflows:
-  eva_catalog_workflow:
+  eva_client_service_workflow:
     jobs:
       - checkout_code:
           filters:
@@ -238,9 +271,6 @@ workflows:
           # Therefore, releases MUST start with 'v'
           filters:
             tags:
-              only: /.*/
-          # filters:
-          #   tags:
-          #     only: /^v.*/
-          #   branches:
-          #     ignore: /.*/
+              only: /^v.*/
+            branches:
+              ignore: /.*/
