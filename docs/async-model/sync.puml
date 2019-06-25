@@ -1,0 +1,46 @@
+@startuml
+
+actor Client
+
+== Successful Synchronous Query ==
+
+Client -> "Client-Service" : ""**POST** /q/{tenant}/{category}?operation=sync&timeout=30000""
+
+note left
+    **Headers**
+        ""//_cid:          {correlation-id} **[__Optional: Correlation__]**//""
+        ""//If-Match:      {etag}           **[__Optional: Precond__]**//""
+        ""//If-None-Match: {etag}           **[__Optional: Precond__]**//""
+end note
+
+note right
+    **Note**
+    The client may pass in an optional
+    ""**operation=sync**"" query parameter
+end note
+
+activate "Client-Service"
+
+"Client-Service" --> Client : ""**200** OK""
+
+note left
+    **Headers**
+        ""//_cid:          {correlation-id} **[__Optional: Correlation__]**//""
+        ""ETag:          {etag-value}""
+end note
+
+... //delay of 30 seconds// ...
+
+"Client-Service" --> Client : ""**408** Request Timeout""
+
+deactivate "Client-Service"
+
+note over Client, "Client-Service"
+    The actual query may spin to completion, but the client service
+    needs to return once the timeout is reached. In the future the
+    query engine may be able to preempt a query in which case, once
+    the time limit is reached the client service will return the
+    **""408 Request Timeout""** then initiate the query preemption.
+end note
+
+@enduml

@@ -1,0 +1,427 @@
+@startuml
+
+actor Client
+participant "Client-Service"
+participant Query
+database Cache
+
+note left of Client
+**Eva ETag Specification**
+---
+""**//<schema>//=//<payload>//**""
+---
+""**schema**"" defines the encoding of the payload.
+** ""**EET1**"" = Eva ETag Version 1
+---
+EET1 Payload Specification
+---
+The payload is a base64 encoded JSON structure with the following members:
+** t: the database T value **[Client-Service must deliver this]**
+end note
+
+== Polling & Ranging Asynchronous Query ==
+
+group Initiation
+
+Client -> "Client-Service" : ""**POST** /q/{tenant}/{category}?operation=polling""\n    __//or//__\n""**POST** /q/{tenant}/{category}?operation=range""
+activate "Client-Service"
+
+note left
+    **Headers**
+        ""//_cid:          {correlation-id}    **[__Optional: Correlation__]**//""
+        ""//Accept-Ranges: entries             **[__Optional: Range__]**//""
+        ""//Connection:    keep-alive          **[__Optional: Conn__]**//""
+        ""//If-Match:      {etag}              **[__Optional: Precond__]**//""
+        ""//If-None-Match: {etag}              **[__Optional: Precond__]**//""
+        ""//Keep-Alive:    timeout=5, max=1000 **[__Optional: Conn__]**//""
+        ""//Range:         entries=0-99        **[__Optional: Range__]**//""
+end note
+
+"Client-Service" --> Client : ""**412** Precondition Failed"" - Invalid precondition (failure)
+
+note over Client, "Client-Service"
+    If the ""**Range**"" header is larger then some specified configuration value,
+    a ""**416 Range Not Satisfiable**"" response should be expected.
+end note
+
+"Client-Service" --> Client : ""**416** Range Not Satisfiable"" - Invalid range (failure)
+
+"Client-Service" -> Query : Start Query
+
+note over Client, "Client-Service"
+    For ranged requests, the ""**Range**"" header is optional. If the ""**Range**""
+    header is in the request, then the service will wait until the initial
+    range can be satisfied, and return that block.
+end note
+
+activate Query
+Query --> Cache : Add Cache Entry
+
+note over Cache
+    The cache entry should
+    include the token, an
+    expiration, the status,
+    and any result. Note that
+    results may be paged.
+end note
+
+"Client-Service" --> Client : ""**202** Accepted"" - Non-ranged response (successful)
+
+note left
+    **Headers**
+        ""//_cid:          {correlation-id}    **[__Optional: Correlation__]**//""
+        ""Age:           0""
+        ""//Connection:    keep-alive          **[__Optional: Conn__]**//""
+        ""ETag:          {etag-value}""
+        ""Expires:       Thu, 01 Dec 2018 16:00:00 GMT""
+        ""//Keep-Alive:    timeout=5, max=1000 **[__Optional: Conn__]**//""
+        ""Location:      /q/{tenant}/{category}/{token}""
+        ""Retry-After:   120""
+end note
+
+note right
+    =Response
+    ==
+    ""Content-Type: application/json""
+
+        // **Note:** This response format could change according to the input//
+        //           ""**Accept**"" header value //
+
+    ""{""
+    ""    "links": [{""
+    ""        "rel": "status",""
+    ""        "href": "/check/{tenant}/{category}/{token}"""
+    ""    }]""
+    ""}""
+end note
+
+"Client-Service" --> Client : ""**206** Partial Content"" - Ranged response (successful)
+
+note left
+    **Headers**
+        ""//_cid:          {correlation-id}     **[__Optional: Correlation__]**//""
+        ""Age:            0""
+        ""//Connection:     keep-alive          **[__Optional: Conn__]**//""
+        ""Content-Length: 100""
+        ""Content-Range:  entries=0-99/*""
+        ""ETag:           {etag-value}""
+        ""Expires:        Thu, 01 Dec 2018 16:00:00 GMT""
+        ""//Keep-Alive:     timeout=5, max=1000 **[__Optional: Conn__]**//""
+        ""Location:       /q/{tenant}/{category}/{token}""
+        ""Retry-After:    120""
+end note
+
+note right
+    =Response
+        The first payload may not exist if the return type is the
+        **""//polling//""** operation type.
+    ==
+    ""Content-Type: multipart/mixed; boundry={boundry}""
+    ""--{boundry}""
+    ""Content-Type: application/vnd.eva+edn""
+    --
+    .. Body of the initial response ..
+    --
+    ""--{boundry}""
+    ""Content-Type: application/json""
+
+        // **Note:** This response format could change according to the input//
+        //           ""**Accept**"" header value //
+
+    ""{""
+    ""    "links": [{""
+    ""        "rel": "status",""
+    ""        "href": "/check/{tenant}/{category}/{token}"""
+    ""    }]""
+    ""}""
+    ""~--{boundry}--""
+end note
+
+deactivate "Client-Service"
+
+end
+
+...
+
+group Polling Loop - Not complete
+
+Client -> "Client-Service" : ""**GET** /q/{tenant}/{category}/{token}""
+activate "Client-Service"
+note left
+    **Headers**
+        ""//_cid:          {correlation-id}    **[__Optional: Correlation__]**//""
+        ""//Connection:    keep-alive          **[__Optional: Conn__]**//""
+        ""//If-Match:      {etag}              **[__Optional: Precond__]**//""
+        ""//If-None-Match: {etag}              **[__Optional: Precond__]**//""
+        ""//Keep-Alive:    timeout=5, max=1000 **[__Optional: Conn__]**//""
+        ""//Range:         entries=100-199     **[__Optional: Range__]**//""
+end note
+
+"Client-Service" --> Client : ""**404** Not Found"" - Invalid token (failure)
+
+"Client-Service" --> Client : ""**412** Precondition Failed"" - Invalid precondition (failure)
+
+note over Client, "Client-Service"
+    If the ""**Range**"" header is larger then some specified configuration value,
+    a ""**416 Range Not Satisfiable**"" response should be expected.
+end note
+
+"Client-Service" --> Client : ""**416** Range Not Satisfiable"" - Invalid range (failure)
+
+group Determin Progress
+else Query is Local
+"Client-Service" <--> Query : Check Status
+else Query is not Local
+"Client-Service" <--> Cache : Check Status
+end
+
+"Client-Service" --> Client : ""**204** No Content"" - Non-ranged response (successful)
+
+note left
+    **Headers**
+        ""//_cid:          {correlation-id}    **[__Optional: Correlation__]**//""
+        ""Age:           10""
+        ""//Connection:    keep-alive          **[__Optional: Conn__]**//""
+        ""ETag:          {etag-value}""
+        ""Expires:       Thu, 01 Dec 2018 18:00:00 GMT""
+        ""//Keep-Alive:    timeout=5, max=1000 **[__Optional: Conn__]**//""
+        ""Retry-After:   120""
+end note
+
+"Client-Service" --> Client : ""**206** Partial Content"" - Ranged response (successful)
+
+note left
+    **Headers**
+        ""//_cid:          {correlation-id}     **[__Optional: Correlation__]**//""
+        ""Age:            10""
+        ""//Connection:     keep-alive          **[__Optional: Conn__]**//""
+        ""Content-Length: 100""
+        ""Content-Range:  entries=100-199/*""
+        ""ETag:           {etag-value}""
+        ""Expires:        Thu, 01 Dec 2018 18:00:00 GMT""
+        ""//Keep-Alive:     timeout=5, max=1000 **[__Optional: Conn__]**//""
+        ""Retry-After:    120""
+end note
+
+deactivate "Client-Service"
+
+note over Client, "Client-Service"
+    The client should wait the ""**Retry-After**"" number of seconds before attempting to
+    check again for results. If they fail to respond before the ""**Expires**"" time, the
+    client service should terminate the request and recover the resources. Note that the
+    ""**Expires**"" time should be configurable and have a reasonable default. It is
+    assumed this would be in the minutes time frame (5 to 15 minutes?).
+end note
+
+end
+
+...
+
+group Polling Loop - Extend Expiration
+
+Client -> "Client-Service" : ""**HEAD** /q/{tenant}/{category}/{token}""
+activate "Client-Service"
+note left
+    **Headers**
+        ""//_cid:          {correlation-id}    **[__Optional: Correlation__]**//""
+        ""//Connection:    keep-alive          **[__Optional: Conn__]**//""
+        ""//If-Match:      {etag}              **[__Optional: Precond__]**//""
+        ""//If-None-Match: {etag}              **[__Optional: Precond__]**//""
+        ""//Keep-Alive:    timeout=5, max=1000 **[__Optional: Conn__]**//""
+end note
+
+"Client-Service" --> Client : ""**404** Not Found"" - Invalid token (failure)
+
+"Client-Service" --> Client : ""**412** Precondition Failed"" - Invalid precondition (failure)
+
+"Client-Service" --> Client : ""**204** No Content"" - Typical response (successful)
+
+note left
+    **Headers**
+        ""//_cid:          {correlation-id}    **[__Optional: Correlation__]**//""
+        ""Age:           10""
+        ""//Connection:    keep-alive          **[__Optional: Conn__]**//""
+        ""ETag:          {etag-value}""
+        ""Expires:       Thu, 01 Dec 2018 18:00:00 GMT""
+        ""//Keep-Alive:    timeout=5, max=1000 **[__Optional: Conn__]**//""
+        ""Retry-After:   120""
+end note
+
+deactivate "Client-Service"
+
+end
+
+...
+
+group Polling Loop - Complete
+
+Client -> "Client-Service" : ""**GET** /q/{tenant}/{category}/{token}""
+deactivate Query
+activate "Client-Service"
+note left
+    **Headers**
+        ""//_cid:          {correlation-id}    **[__Optional: Correlation__]**//""
+        ""//Connection:    keep-alive          **[__Optional: Conn__]**//""
+        ""//If-Match:      {etag}              **[__Optional: Precond__]**//""
+        ""//If-None-Match: {etag}              **[__Optional: Precond__]**//""
+        ""//Keep-Alive:    timeout=5, max=1000 **[__Optional: Conn__]**//""
+        ""//Range:         entries=200-299     **[__Optional: Range__]**//""
+end note
+
+"Client-Service" --> Client : ""**404** Not Found"" - Invalid token (failure)
+
+"Client-Service" --> Client : ""**412** Precondition Failed"" - Invalid precondition (failure)
+
+note over Client, "Client-Service"
+    If the ""**Range**"" header is larger then some specified configuration value,
+    a ""**416 Range Not Satisfiable**"" response should be expected.
+end note
+
+"Client-Service" --> Client : ""**416** Range Not Satisfiable"" - Invalid range (failure)
+
+group Get Results
+else Query is Local
+"Client-Service" <--> Query : Check Status
+"Client-Service" <-- Query : Retrieve Results
+else Query is not Local
+"Client-Service" <--> Cache : Check Status
+"Client-Service" <-- Cache : Retrieve Results
+end
+
+"Client-Service" --> Client : ""**200** OK"" - Non-ranged response (successful)
+note left
+    **Headers**
+        ""//_cid:        {correlation-id}    **[__Optional: Correlation__]**//""
+        ""Age:         50""
+        ""//Connection:  keep-alive          **[__Optional: Conn__]**//""
+        ""ETag:        {etag-value}""
+        ""Expires:     Thu, 01 Dec 2018 18:00:00 GMT""
+        ""//Keep-Alive:  timeout=5, max=1000 **[__Optional: Conn__]**//""
+end note
+
+"Client-Service" --> Client : ""**206** Partial Content"" - Ranged response (successful)
+note left
+    **Headers**
+        ""//_cid:           {correlation-id}    **[__Optional: Correlation__]**//""
+        ""Age:            50""
+        ""//Connection:     keep-alive          **[__Optional: Conn__]**//""
+        ""Content-Length: 84""
+        ""Content-Range:  entries 200-283/284""
+        ""ETag:           {etag-value}""
+        ""Expires:        Thu, 01 Dec 2018 18:00:00 GMT""
+        ""//Keep-Alive:     timeout=5, max=1000 **[__Optional: Conn__]**//""
+end note
+
+deactivate "Client-Service"
+
+note over Client, "Client-Service"
+    At this point the service should return the results of the query to the client. Note that this could
+    actually be returned many times. The ""**Expires**"" header should advance on each ""**GET**"" to
+    ensure the contents are not deleted inadvertently.
+end note
+
+end
+
+...
+
+group Cleanup
+
+Client -> "Client-Service" : ""**DELETE** /q/{tenant}/{category}/{token}""
+activate Query
+activate "Client-Service"
+note left
+    **Headers**
+        ""//_cid:       {correlation-id}    **[__Optional: Correlation__]**//""
+        ""//Connection: keep-alive          **[__Optional: Conn__]**//""
+        ""//Keep-Alive: timeout=5, max=1000 **[__Optional: Conn__]**//""
+end note
+
+"Client-Service" --> Client : ""**404** Not Found"" - Invalid token (failure)
+
+"Client-Service" <--> Query : Check Status
+"Client-Service" -> Query : Send Kill Command
+Query -> Cache : Update Cache to \nreflect termination
+Query -> Query : Terminate
+
+note over Client, "Client-Service"
+    If there is any error on the termination process, a ""**500 Internal Server Error**"" should be expected.
+end note
+
+"Client-Service" --> Client : ""**500** Internal Server Error""
+
+note left
+    **Headers**
+        ""//_cid:       {correlation-id}    **[__Optional: Correlation__]**//""
+        ""//Connection: keep-alive          **[__Optional: Conn__]**//""
+        ""ETag:       {etag-value}""
+        ""//Keep-Alive: timeout=5, max=1000 **[__Optional: Conn__]**//""
+end note
+
+Query --> "Client-Service" : Termination verified
+
+destroy Query
+
+"Client-Service" --> Client : ""**200** OK""
+deactivate "Client-Service"
+note left
+    **Headers**
+        ""//_cid:       {correlation-id}    **[__Optional: Correlation__]**//""
+        ""//Connection: keep-alive          **[__Optional: Conn__]**//""
+        ""ETag:       {etag-value}""
+        ""//Keep-Alive: timeout=5, max=1000 **[__Optional: Conn__]**//""
+end note
+
+note over Client, "Client-Service"
+    This should follow the same rules as if the request expired. There should be a retention period for
+    the knowledge that the ""**{token}**"" actually existed, but eventually even that should be removed.
+    Also, if this is called before the polling can complete, this is effectively a kill signal to the
+    query engine and the query should recover the resources.
+end note
+
+end
+
+...
+
+group Polling Loop - Expired
+
+Client -> "Client-Service" : ""**GET** /q/{tenant}/{category}/{token}""
+activate "Client-Service"
+note left
+    **Headers**
+        ""//_cid:          {correlation-id}    **[__Optional: Correlation__]**//""
+        ""//Connection:    keep-alive          **[__Optional: Conn__]**//""
+        ""//If-Match:      {etag}              **[__Optional: Precond__]**//""
+        ""//If-None-Match: {etag}              **[__Optional: Precond__]**//""
+        ""//Keep-Alive:    timeout=5, max=1000 **[__Optional: Conn__]**//""
+end note
+
+"Client-Service" --> Client : ""**404** Not Found"" - Invalid token (failure)
+
+"Client-Service" --> Client : ""**412** Precondition Failed"" - Invalid precondition (failure)
+
+group Get Results
+else Query doesn't exist, so check cache
+"Client-Service" <--> Cache : Check Status
+"Client-Service" <-- Cache : Retrieve Results
+end
+
+"Client-Service" --> Client : ""**408** Request Timeout""
+
+note left
+    **Headers**
+        ""//_cid:       {correlation-id}    **[__Optional: Correlation__]**//""
+        ""//Connection: keep-alive          **[__Optional: Conn__]**//""
+        ""//Keep-Alive: timeout=5, max=1000 **[__Optional: Conn__]**//""
+end note
+
+deactivate "Client-Service"
+
+note over Client, "Client-Service"
+    This should only be returned for requests that //just// expired. If requests happens after
+    the expiration, a ""**404 Not Found**"" response is appropriate. This clean out time frame
+    should be configurable, and have a reasonable default (One Day?).
+end note
+
+end
+
+@enduml
