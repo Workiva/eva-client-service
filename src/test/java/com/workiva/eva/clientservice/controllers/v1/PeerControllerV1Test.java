@@ -605,14 +605,4 @@ public class PeerControllerV1Test {
       // nothing
     }
   }
-
-  @Test
-  public void getStatusTest() throws Throwable {
-    String results = controller.status("correlation-id", HEADERS, TENANT, CATEGORY, LABEL);
-    PersistentArrayMap resultMap = SerializerUtils.deserialize(HEADERS, results);
-
-    long latestT = (long) resultMap.get(Keyword.intern("latestT"));
-
-    Assert.assertTrue(latestT >= 0);
-  }
 }

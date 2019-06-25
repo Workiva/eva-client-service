@@ -418,9 +418,17 @@ public class RestExceptionHandlerTest {
     MvcResult result =
         mockMvc
             .perform(
-                get("/eva/v.1/status/{tenant}/{category}/{label}", "test", "test", "test")
+                post("/eva/v.1/latestT/{tenant}/{category}", "test", "test")
                     .header("_cid", "test")
-                    .accept("application/vnd.eva+wrong"))
+                    .accept("application/vnd.eva+wrong")
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .content(
+                        EntityUtils.toString(
+                            new UrlEncodedFormEntity(
+                                Arrays.asList(
+                                    new BasicNameValuePair(
+                                        "reference",
+                                        "#eva.client.service/snapshot-ref { :label \"test\" }"))))))
             .andExpect(status().is(415))
             .andReturn();
     String content = result.getResponse().getContentAsString();
@@ -444,7 +452,7 @@ public class RestExceptionHandlerTest {
                                         "query", "[:find ?attr :in $ :where [_ :db/ident ?attr]]"),
                                     new BasicNameValuePair(
                                         "p[0]",
-                                        "#eva.client.service/snapshot-ref [ \"test\" #eva.client.service/inline { :fn first :params [[]] } ]"))))))
+                                        "#eva.client.service/snapshot-ref { :label \"test\" :as-of #eva.client.service/inline { :fn first :params [[]] } }"))))))
             .andExpect(status().is(400))
             .andReturn();
     String content = result.getResponse().getContentAsString();
