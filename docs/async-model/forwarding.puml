@@ -1,0 +1,141 @@
+@startuml
+
+actor Client
+participant "Client-Service"
+participant Query
+database Cache
+queue Destination
+
+== Forward Asynchronous Query ==
+
+group Initiation
+
+Client -> "Client-Service" : ""**POST** /q/{tenant}/{category}?operation=forward""\n""                           &destination={destination}""\n""                           //&propagation={mode}//""
+
+note right
+= Propagation Modes
+--
+** ""all          :""All results and errors will be sent
+""                ""  to the destination
+** ""only-success :""Only successful queries will be sent
+""                ""  to the destination
+end note
+
+activate "Client-Service"
+
+note left
+    **Headers**
+        ""//_cid:          {correlation-id}    **[__Optional: Correlation__]**//""
+        ""//If-Match:      {etag}              **[__Optional: Precond__]**//""
+        ""//If-None-Match: {etag}              **[__Optional: Precond__]**//""
+end note
+
+"Client-Service" --> Client : ""**412** Precondition Failed"" - Invalid precondition (failure)
+
+"Client-Service" -> Query : Start Query
+
+activate Query
+Query --> Cache : Add Cache Entry
+
+note over Cache
+    The cache entry should
+    include the token, an
+    expiration, the status,
+    and any result. Note that
+    results may be paged.
+end note
+
+"Client-Service" --> Client : ""**202** Accepted"" - Response (successful)
+
+note left
+    **Headers**
+        ""//_cid:          {correlation-id}    **[__Optional: Correlation__]**//""
+        ""ETag:          {etag-value}""
+        ""Expires:       Thu, 01 Dec 2018 16:00:00 GMT""
+        ""Location:      /q/{tenant}/{category}/{token}""
+        ""Retry-After:   120""
+end note
+
+note right
+    =Response
+    ==
+    ""Content-Type: application/json""
+
+        // **Note:** This response format could change according to the input//
+        //           ""**Accept**"" header value //
+
+    ""{""
+    ""    "links": [""
+    ""        "rel": "status",""
+    ""        "href": "/check/{tenant}/{category}/{token}"""
+    ""    ]""
+    ""}""
+end note
+
+deactivate "Client-Service"
+
+loop continuously as needed
+Query <-> Cache : Update status
+end
+
+Query -> Destination : Post responses
+
+deactivate Query
+
+end
+
+...
+
+group Cleanup
+
+Client -> "Client-Service" : ""**DELETE** /q/{tenant}/{category}/{token}""
+activate Query
+
+activate "Client-Service"
+note left
+    **Headers**
+        ""//_cid:       {correlation-id}    **[__Optional: Correlation__]**//""
+end note
+
+"Client-Service" --> Client : ""**404** Not Found"" - Invalid token (failure)
+
+"Client-Service" <--> Query : Check Status
+"Client-Service" -> Query : Send Kill Command
+Query -> Cache : Update Cache to \nreflect termination
+Query -> Query : Terminate
+
+note over Client, "Client-Service"
+    If there is any error on the termination process, a ""**500 Internal Server Error**"" should be expected.
+end note
+
+"Client-Service" --> Client : ""**500** Internal Server Error""
+
+note left
+    **Headers**
+        ""//_cid:       {correlation-id}    **[__Optional: Correlation__]**//""
+        ""ETag:       {etag-value}""
+end note
+
+Query --> Destination : Termination message (if applicable)
+Query --> "Client-Service" : Termination verified
+
+destroy Query
+
+"Client-Service" --> Client : ""**200** OK""
+deactivate "Client-Service"
+note left
+    **Headers**
+        ""//_cid:       {correlation-id}    **[__Optional: Correlation__]**//""
+        ""ETag:       {etag-value}""
+end note
+
+note over Client, "Client-Service"
+    This should follow the same rules as if the request expired. There should be a retention period for
+    the knowledge that the ""**{token}**"" actually existed, but eventually even that should be removed.
+    Also, if this is called before the polling can complete, this is effectively a kill signal to the
+    query engine and the query should recover the resources.
+end note
+
+end
+
+@enduml
