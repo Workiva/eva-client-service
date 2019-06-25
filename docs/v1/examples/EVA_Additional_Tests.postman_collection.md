@@ -422,7 +422,7 @@ Calls the Status Endpoint
 Calls `latestT` Deprecated.
 
 
-### Method - **GET**
+### Method - **POST**
 
 
 ### Headers
@@ -431,6 +431,17 @@ Calls `latestT` Deprecated.
 | --- | ----- |
 | Accept | application/vnd.eva+edn |
 | Content-Type | application/x-www-form-urlencoded |
+
+
+### Body Fields - **urlencoded**
+
+#### reference - _text_
+
+```
+#eva.client.service/connection-ref {
+  :label "test-label"
+}
+```
 
 ## Transact Schema - In-Memory 1
 

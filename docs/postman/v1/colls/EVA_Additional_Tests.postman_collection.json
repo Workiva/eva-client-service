@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "93e65610-2399-4d24-8a13-dbeee28f4927",
+		"_postman_id": "59de1c92-2d98-454d-a574-cadcf2b36329",
 		"name": "EVA-Client-Service - Additional Tests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -867,64 +867,6 @@
 			"response": []
 		},
 		{
-			"name": "[nodocs] Status",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "5856ced3-bcdb-404e-be3a-802baa2e6a7f",
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test(\"Body is correct\", function () {",
-							"    var resp = pm.response.text().slice(1, -1);",
-							"    pm.expect(resp.match(/(:latestT.*\\d)/g).length).to.be.above(0);",
-							"});",
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Accept",
-						"value": "application/vnd.eva+edn"
-					},
-					{
-						"key": "Content-Type",
-						"value": "application/x-www-form-urlencoded",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "{{host}}:{{port}}/eva/v.1/status/{{tenant}}/{{category}}/{{label}}",
-					"host": [
-						"{{host}}"
-					],
-					"port": "{{port}}",
-					"path": [
-						"eva",
-						"v.1",
-						"status",
-						"{{tenant}}",
-						"{{category}}",
-						"{{label}}"
-					]
-				},
-				"description": "Calls the Status Endpoint"
-			},
-			"response": []
-		},
-		{
 			"name": "Health",
 			"event": [
 				{
@@ -999,7 +941,7 @@
 				}
 			],
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [
 					{
 						"key": "Accept",
@@ -1014,11 +956,17 @@
 					}
 				],
 				"body": {
-					"mode": "raw",
-					"raw": ""
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "reference",
+							"value": "#eva.client.service/connection-ref {\n  :label \"test-label\"\n}",
+							"type": "text"
+						}
+					]
 				},
 				"url": {
-					"raw": "{{host}}:{{port}}/eva/v.1/latestT/{{tenant}}/{{category}}/{{label}}",
+					"raw": "{{host}}:{{port}}/eva/v.1/latestT/{{tenant}}/{{category}}",
 					"host": [
 						"{{host}}"
 					],
@@ -1028,8 +976,7 @@
 						"v.1",
 						"latestT",
 						"{{tenant}}",
-						"{{category}}",
-						"{{label}}"
+						"{{category}}"
 					]
 				},
 				"description": "Calls `latestT` Deprecated."

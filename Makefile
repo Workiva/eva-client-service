@@ -75,3 +75,7 @@ test:
 
 update-tocs:
 	./.circleci/scripts/update-tocs.sh
+
+update-postman-docs:
+	./scripts/ci/update-postman-docs.sh
+	./.circleci/scripts/update-tocs.sh

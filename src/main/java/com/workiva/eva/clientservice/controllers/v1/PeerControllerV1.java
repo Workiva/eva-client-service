@@ -15,7 +15,6 @@
 package com.workiva.eva.clientservice.controllers.v1;
 
 import clojure.lang.Keyword;
-import clojure.lang.PersistentHashMap;
 import eva.Alpha;
 import eva.Attribute;
 import eva.Connection;
@@ -86,7 +85,6 @@ public class PeerControllerV1 {
   private static final String EXTANT_ENTITY = "extant-entity";
 
   /** Additional endpoints. */
-  private static final String STATUS = "status";
 
   /**
    * Create the controller.
@@ -141,15 +139,11 @@ public class PeerControllerV1 {
       @RequestParam("reference") final String reference,
       @RequestParam("transaction") final String transaction)
       throws Throwable {
-    Map<String, Object> params =
-        new HashMap<String, Object>() {
-          {
-            put("tenant", tenant);
-            put("category", category);
-            put("reference", reference);
-            put("transaction", transaction);
-          }
-        };
+    Map<String, Object> params = new HashMap<String, Object>();
+    params.put("tenant", tenant);
+    params.put("category", category);
+    params.put("reference", reference);
+    params.put("transaction", transaction);
     if (correlationId == null || ValueConstants.DEFAULT_NONE.equals(correlationId)) {
       correlationId = UUID.randomUUID().toString();
     }
@@ -204,15 +198,11 @@ public class PeerControllerV1 {
       @RequestParam("reference") final String reference,
       @RequestParam("transaction") final String transaction)
       throws Throwable {
-    Map<String, Object> params =
-        new HashMap<String, Object>() {
-          {
-            put("tenant", tenant);
-            put("category", category);
-            put("reference", reference);
-            put("transaction", transaction);
-          }
-        };
+    Map<String, Object> params = new HashMap<String, Object>();
+    params.put("tenant", tenant);
+    params.put("category", category);
+    params.put("reference", reference);
+    params.put("transaction", transaction);
     try (MDC.MDCCloseable logPath = MDC.putCloseable("path", WITH); ) {
       return ControllerUtils.logRequestResponse(
           new RequestContext.Builder().httpHeaders(headers).build().startSpan(WITH),
@@ -257,15 +247,11 @@ public class PeerControllerV1 {
       @RequestParam("query") final String query,
       @ModelAttribute("p") final QueryParameters queryParams)
       throws Throwable {
-    Map params =
-        new HashMap<String, Object>() {
-          {
-            put("tenant", tenant);
-            put("category", category);
-            put("query", query);
-            put("params", queryParams);
-          }
-        };
+    Map<String, Object> params = new HashMap<String, Object>();
+    params.put("tenant", tenant);
+    params.put("category", category);
+    params.put("query", query);
+    params.put("params", queryParams);
     if (correlationId == null || ValueConstants.DEFAULT_NONE.equals(correlationId)) {
       correlationId = UUID.randomUUID().toString();
     }
@@ -314,16 +300,12 @@ public class PeerControllerV1 {
       @RequestParam("pattern") final String pattern,
       @ModelAttribute("p") final QueryParameters queryParams)
       throws Throwable {
-    Map params =
-        new HashMap<String, Object>() {
-          {
-            put("tenant", tenant);
-            put("category", category);
-            put("reference", reference);
-            put("ids", ids);
-            put("pattern", pattern);
-          }
-        };
+    Map<String, Object> params = new HashMap<String, Object>();
+    params.put("tenant", tenant);
+    params.put("category", category);
+    params.put("reference", reference);
+    params.put("ids", ids);
+    params.put("pattern", pattern);
     if (correlationId == null || ValueConstants.DEFAULT_NONE.equals(correlationId)) {
       correlationId = UUID.randomUUID().toString();
     }
@@ -382,16 +364,12 @@ public class PeerControllerV1 {
       @RequestParam("index") final String index,
       @RequestParam("components") final String components)
       throws Throwable {
-    Map params =
-        new HashMap<String, Object>() {
-          {
-            put("tenant", tenant);
-            put("category", category);
-            put("reference", reference);
-            put("index", index);
-            put("components", components);
-          }
-        };
+    Map<String, Object> params = new HashMap<String, Object>();
+    params.put("tenant", tenant);
+    params.put("category", category);
+    params.put("reference", reference);
+    params.put("index", index);
+    params.put("components", components);
     try (MDC.MDCCloseable logPath = MDC.putCloseable("path", DATOMS); ) {
       return ControllerUtils.logRequestResponse(
           new RequestContext.Builder().httpHeaders(headers).build().startSpan(DATOMS),
@@ -445,16 +423,12 @@ public class PeerControllerV1 {
       @RequestParam("start") final Long start,
       @RequestParam(name = "end", required = false, defaultValue = "-1") final Long end)
       throws Throwable {
-    Map params =
-        new HashMap<String, Object>() {
-          {
-            put("tenant", tenant);
-            put("category", category);
-            put("reference", reference);
-            put("start", start);
-            put("end", end);
-          }
-        };
+    Map<String, Object> params = new HashMap<String, Object>();
+    params.put("tenant", tenant);
+    params.put("category", category);
+    params.put("reference", reference);
+    params.put("start", start);
+    params.put("end", end);
     try (MDC.MDCCloseable logPath = MDC.putCloseable("path", TX_RANGE); ) {
       return ControllerUtils.logRequestResponse(
           new RequestContext.Builder().httpHeaders(headers).build().startSpan(TX_RANGE),
@@ -471,7 +445,7 @@ public class PeerControllerV1 {
               Long latestT =
                   SerializerUtils.deserialize(
                       parentCtx.getHttpHeaders(),
-                      latestT(correlationId, headers, tenant, category, ref.label()));
+                      latestT(correlationId, headers, ref.toString(), tenant, category));
               if (start.equals(latestT)) {
                 latestT++;
               }
@@ -493,22 +467,17 @@ public class PeerControllerV1 {
    * @return Returns the latest tx number.
    * @throws Throwable Thrown on any error.
    */
-  @RequestMapping(path = "latestT/{tenant}/{category}/{label}", method = RequestMethod.GET)
+  @RequestMapping(path = "latestT/{tenant}/{category}", method = RequestMethod.POST)
   public @ResponseBody String latestT(
       @RequestHeader(name = "_cid", required = false) final String correlation,
       @RequestHeader Map<String, String> headers,
+      @RequestParam("reference") final String reference,
       @PathVariable final String tenant,
-      @PathVariable final String category,
-      @PathVariable final String label)
+      @PathVariable final String category)
       throws Throwable {
-    Map params =
-        new HashMap<String, Object>() {
-          {
-            put("tenant", tenant);
-            put("category", category);
-            put("label", label);
-          }
-        };
+    Map<String, Object> params = new HashMap<String, Object>();
+    params.put("tenant", tenant);
+    params.put("category", category);
     try (MDC.MDCCloseable logPath = MDC.putCloseable("path", LATEST_T); ) {
       return ControllerUtils.logRequestResponse(
           new RequestContext.Builder().httpHeaders(headers).build().startSpan(LATEST_T),
@@ -516,15 +485,11 @@ public class PeerControllerV1 {
           correlation,
           params,
           (RequestContext parentCtx) -> {
-            Connection conn =
-                this.peerRepository.getConnection(
-                    parentCtx,
+            Reference ref =
+                (Reference)
                     ReferenceUtils.deserializeEdn(
-                        parentCtx,
-                        this.peerRepository,
-                        tenant,
-                        category,
-                        String.format(ReferenceUtils.CONNECTION_REF_MAP, label)));
+                        parentCtx, this.peerRepository, tenant, category, reference);
+            Connection conn = this.peerRepository.getConnection(parentCtx, ref);
             return formatResult(parentCtx, LATEST_T, params, conn.latestT());
           });
     }
@@ -552,16 +517,12 @@ public class PeerControllerV1 {
       @RequestParam("function") final String function,
       @ModelAttribute("p") final QueryParameters queryParams)
       throws Throwable {
-    Map params =
-        new HashMap<String, Object>() {
-          {
-            put("tenant", tenant);
-            put("category", category);
-            put("reference", reference);
-            put("function", function);
-            put("params", queryParams);
-          }
-        };
+    Map<String, Object> params = new HashMap<String, Object>();
+    params.put("tenant", tenant);
+    params.put("category", category);
+    params.put("reference", reference);
+    params.put("function", function);
+    params.put("params", queryParams);
     if (correlationId == null || ValueConstants.DEFAULT_NONE.equals(correlationId)) {
       correlationId = UUID.randomUUID().toString();
     }
@@ -619,15 +580,11 @@ public class PeerControllerV1 {
       @RequestParam("ident") final String ident,
       @RequestParam(name = "strict", required = false) final boolean strict)
       throws Throwable {
-    Map params =
-        new HashMap<String, Object>() {
-          {
-            put("tenant", tenant);
-            put("category", category);
-            put("reference", reference);
-            put("ident", ident);
-          }
-        };
+    Map<String, Object> params = new HashMap<String, Object>();
+    params.put("tenant", tenant);
+    params.put("category", category);
+    params.put("reference", reference);
+    params.put("ident", ident);
     if (correlationId == null || ValueConstants.DEFAULT_NONE.equals(correlationId)) {
       correlationId = UUID.randomUUID().toString();
     }
@@ -682,15 +639,11 @@ public class PeerControllerV1 {
       @RequestParam("entid") final String entid,
       @RequestParam(name = "strict", required = false) final boolean strict)
       throws Throwable {
-    Map params =
-        new HashMap<String, Object>() {
-          {
-            put("tenant", tenant);
-            put("category", category);
-            put("reference", reference);
-            put("entid", entid);
-          }
-        };
+    Map<String, Object> params = new HashMap<String, Object>();
+    params.put("tenant", tenant);
+    params.put("category", category);
+    params.put("reference", reference);
+    params.put("entid", entid);
     if (correlationId == null || ValueConstants.DEFAULT_NONE.equals(correlationId)) {
       correlationId = UUID.randomUUID().toString();
     }
@@ -745,15 +698,11 @@ public class PeerControllerV1 {
       @RequestParam("attrId") final String attrId,
       @RequestParam(name = "strict", required = false) final boolean strict)
       throws Throwable {
-    Map params =
-        new HashMap<String, Object>() {
-          {
-            put("tenant", tenant);
-            put("category", category);
-            put("reference", reference);
-            put("attrId", attrId);
-          }
-        };
+    Map<String, Object> params = new HashMap<String, Object>();
+    params.put("tenant", tenant);
+    params.put("category", category);
+    params.put("reference", reference);
+    params.put("attrId", attrId);
     if (correlationId == null || ValueConstants.DEFAULT_NONE.equals(correlationId)) {
       correlationId = UUID.randomUUID().toString();
     }
@@ -807,15 +756,11 @@ public class PeerControllerV1 {
       @RequestParam("reference") final String reference,
       @RequestParam("ident") final String ident)
       throws Throwable {
-    Map params =
-        new HashMap<String, Object>() {
-          {
-            put("tenant", tenant);
-            put("category", category);
-            put("reference", reference);
-            put("ident", ident);
-          }
-        };
+    Map<String, Object> params = new HashMap<String, Object>();
+    params.put("tenant", tenant);
+    params.put("category", category);
+    params.put("reference", reference);
+    params.put("ident", ident);
     if (correlationId == null || ValueConstants.DEFAULT_NONE.equals(correlationId)) {
       correlationId = UUID.randomUUID().toString();
     }
@@ -843,31 +788,5 @@ public class PeerControllerV1 {
       ControllerUtils.removeQueryParamReferenceFromMDC(referenceCounters);
       ControllerUtils.removeReferenceMetadata();
     }
-  }
-
-  /**
-   * Returns status information on a particular ConnectionReference.
-   *
-   * @param correlationId The correlation id.
-   * @param tenant The tenant identifier.
-   * @param category The category identifier.
-   * @param label The label identifier.
-   * @return Returns the contents as EDN.
-   * @throws Throwable Thrown on any error.
-   */
-  @Deprecated
-  @RequestMapping(path = "status/{tenant}/{category}/{label}", method = RequestMethod.GET)
-  public @ResponseBody String status(
-      @RequestHeader(name = "_cid", required = false) String correlationId,
-      @RequestHeader Map<String, String> headers,
-      @PathVariable final String tenant,
-      @PathVariable final String category,
-      @PathVariable final String label)
-      throws Throwable {
-    return SerializerUtils.serialize(
-        headers,
-        PersistentHashMap.create(
-            Keyword.intern("latestT"),
-            Long.parseLong(latestT(correlationId, headers, tenant, category, label))));
   }
 }
