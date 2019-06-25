@@ -49,7 +49,6 @@ import static com.workiva.eva.clientservice.TestUtils.CONNECTION_REF_STRING;
 import static com.workiva.eva.clientservice.TestUtils.LABEL;
 import static com.workiva.eva.clientservice.TestUtils.TENANT;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 public class RestExceptionHandlerTest {

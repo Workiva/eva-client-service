@@ -15,7 +15,6 @@
 package com.workiva.eva.clientservice.controllers.v1;
 
 import clojure.lang.Keyword;
-import clojure.lang.PersistentArrayMap;
 import clojure.lang.PersistentVector;
 import eva.Connection;
 import eva.Database;
