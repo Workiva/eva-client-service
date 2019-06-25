@@ -5,7 +5,7 @@ The client service supports a wide range of asynchronous models.
 #### Eva ETag Specification
 
 There are times when a query needs to know if the database state is at a particular value or not. This can make
-sure that duplicates (though eva can prevent these), known states are either avoided or otherwise processed. This
+sure that duplicates (though Eva can prevent these), known states are either avoided or otherwise processed. This
 is the main motivation for this construct. For this state management, the `ETag` http concept is borrowed.
 
 > ETag Format: `<schema>=<payload>`
