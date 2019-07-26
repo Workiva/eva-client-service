@@ -30,7 +30,7 @@ The Eva client service is an Eva peer which exposes Eva functionality to other l
 To run the client service with default settings and an in-memory database, simply pull the latest docker image from drydock:
 
 ```bash
-docker run --name eva-client-service -p 8080:8080 -d workiva/eva-client-service:latest-release
+docker run --name eva-client-service -p 8080:8080 -d workivadocker/eva-client-service:latest-release
 ```
 
 If you are developing on the client service, execute the following to both build and run the application:
@@ -48,7 +48,7 @@ docker run --name eva-catalog \
   -p 3000:3000 \
   -v $PWD/catalog-configs:/shared \
   -e EVA_CATALOG_DATA=/shared/inmem.edn \
-  -d workiva/eva-catalog:latest-release
+  -d workivadocker/eva-catalog:latest-release
 make catalog-local
 ```
 
@@ -61,7 +61,7 @@ docker run --name eva-catalog \
   -p 3000:3000 \
   -v $PWD/catalog-configs:/shared \
   -e EVA_CATALOG_DATA=/shared/h2.edn \
-  -d Workiva/eva-catalog:latest-release
+  -d workivadocker/eva-catalog:latest-release
 make catalog-local
 ```
 
@@ -76,7 +76,7 @@ make catalog-local
 | `TRACE_RECORDER`         | Name of the tracing recorder to use.  Accepted values are (`harbour` / `jaeger` / `debug` / `off`) | `harbour`
 | `DISABLE_TELEMETRY`      | Can be used to disable telemetry.  Acceptable values are (`true` / `false`) | true 
 | `LOGBACK_LOG_LEVEL`      | Log level to use. [Valid log levels](https://www.slf4j.org/api/org/apache/log4j/Level.html) | INFO
-| `LOGBACK_APPENDER`       | Where to output the logs to (`SOCKET` / `STDOUT`)           | `STDOUT`
+| `LOGBACK_APPENDER`       | Where to output the logs to (`STDOUT`)           | `STDOUT`
 | `SANITIZE_EXCEPTIONS`    | Determines whether or not non `ClientServiceExceptions` are sanitized | true
 | `YOURKIT_AGENT_ENABLE`   | Enable [YourKit](https://www.yourkit.com/) profiling.  You will need to additionally expose the yourkit port if running locally. | false
 | `YOURKIT_AGENT_PATH`     | Path to the YourKit agent | /opt/yourkit-agent/linux-x86-64/libyjpagent.so
@@ -87,7 +87,7 @@ make catalog-local
 
 First, a general understanding of [Eva](http://github.com/Workiva/eva) is highly recommended. This project is intended to be a conduit to Eva, and allows for some interesting behaviours that the native Eva peers could find challenging.
 
-It is highly recommended to utilize a program such as [Postman](https://www.getpostman.com/) when iterating on requests to the client service.  For steps to setup Postman and the included example requests [click here](postman/README.md)
+It is highly recommended to utilize a program such as [Postman](https://www.getpostman.com/) when iterating on requests to the client service.  For steps to setup Postman and the included example requests [click here](docs/postman/v1/README.md)
 
 **For all examples it will be assumed that the client service is running locally on port 8080**
 
