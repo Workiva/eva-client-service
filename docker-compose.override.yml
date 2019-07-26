@@ -1,0 +1,10 @@
+version: '3.6'
+services:
+  eva-db:
+    build: ./compose_remote/eva/docker/eva-db
+  eva-client-service:
+    ports:
+      - 8080:8080
+  eva-catalog:
+    ports:
+      - 3000:3000
