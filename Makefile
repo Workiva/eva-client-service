@@ -3,13 +3,13 @@
 gen-docker:
 	docker build \
 		-f workivabuild.Dockerfile \
-		-t drydock.workiva.net/workiva/eva-client-service:latest-release .
+		-t workivadocker/eva-client-service:latest-release .
 
 gen-docker-no-tests:
 	docker build \
 		--build-arg SKIP_TESTS=true \
 		-f workivabuild.Dockerfile \
-		-t drydock.workiva.net/workiva/eva-client-service:latest-release .
+		-t workivadocker/eva-client-service:latest-release .
 
 run-docker:
 	./scripts/ci/pull_composes.sh
