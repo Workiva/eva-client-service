@@ -238,7 +238,7 @@ It is worth mentioning that if the inline function requires a reference as one o
 
 | Field       | Map Key   | Type     | Required? | Description
 | ----------- | --------- | -------- | --------- | ------------
-| Function    | `:fn`     | String   | Yes       | Name of one of the [provided functions](#inline-function-documentation) or [a custom extended function](#extending-the-set-of-functions)
+| Function    | `:fn`     | String   | Yes       | Name of one of the provided functions or a custom extended function
 | Parameters  | `:params` | Vector   | No        | List of required arguments for the intended function
 
 ##### Template Example
