@@ -4,6 +4,7 @@ services:
     image: ${SKYNET_APPLICATION_EVA_CLIENT_SERVICE_LEGACY:-workivadocker/eva-client-service:latest-release}
     environment:
       - CATALOG_URL=http://eva-catalog:3000
+      - LOGBACK_APPENDER=STDOUT
       - SANITIZE_EXCEPTIONS=false
       - TRACE_RECORDER=off
       - DISABLE_TELEMETRY=true
