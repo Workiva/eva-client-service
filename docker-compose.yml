@@ -2,9 +2,6 @@ version: '3.6'
 services:
   eva-client-service:
     image: ${SKYNET_APPLICATION_EVA_CLIENT_SERVICE_LEGACY:-workivadocker/eva-client-service:latest-release}
-    depends_on:
-      - eva-catalog
-      - eva
     environment:
       - CATALOG_URL=http://eva-catalog:3000
       - SANITIZE_EXCEPTIONS=false

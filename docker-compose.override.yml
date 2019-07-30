@@ -3,6 +3,9 @@ services:
   eva-db:
     build: ./compose_remote/eva/docker/eva-db
   eva-client-service:
+    depends_on:
+      - eva-catalog
+      - eva
     ports:
       - 8080:8080
   eva-catalog:
