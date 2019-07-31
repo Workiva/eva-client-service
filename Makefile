@@ -3,20 +3,25 @@
 gen-docker:
 	docker build \
 		-f workivabuild.Dockerfile \
-		-t drydock.workiva.net/workiva/eva-client-service:latest-release .
+		-t workivadocker/eva-client-service:latest-release .
 
 gen-docker-no-tests:
 	docker build \
 		--build-arg SKIP_TESTS=true \
 		-f workivabuild.Dockerfile \
-		-t drydock.workiva.net/workiva/eva-client-service:latest-release .
+		-t workivadocker/eva-client-service:latest-release .
 
 run-docker:
+	./scripts/ci/pull_composes.sh
 	docker-compose -f docker-compose.yml \
+		-f compose_remote/local-compose-eva.yml \
+		-f compose_remote/local-compose-eva-catalog.yml \
 		-f docker-compose.override.yml up -d
 
 stop-docker:
 	docker-compose -f docker-compose.yml \
+		-f compose_remote/local-compose-eva.yml \
+		-f compose_remote/local-compose-eva-catalog.yml \
 		-f docker-compose.override.yml down
 
 docker-logs:
@@ -33,26 +38,22 @@ install:
 # Application Execution Recipes
 ####
 debug-local: install ## Run with DEBUG log level
-    ECS_LOG_PARAMS=true \
-    SANITIZE_EXCEPTIONS=false \
-    LOGBACK_APPENDER=STDOUT \
-    LOGBACK_LOG_LEVEL=DEBUG \
-    java -jar target/client-service*.jar -disableTelemetry=true --server.port=8080
+	ECS_LOG_PARAMS=true \
+	SANITIZE_EXCEPTIONS=false \
+	LOGBACK_LOG_LEVEL=DEBUG \
+	java -jar target/client-service*.jar -disableTelemetry=true --server.port=8080
 
 run-local: install ## Runs the built emitter locally, with local test settings
-    SANITIZE_EXCEPTIONS=false \
-    LOGBACK_APPENDER=STDOUT \
-    java -jar target/client-service*.jar -disableTelemetry=true --server.port=8081
+	SANITIZE_EXCEPTIONS=false \
+	java -jar target/client-service*.jar -disableTelemetry=true --server.port=8080
 
 traced-local: install
 	SANITIZE_EXCEPTIONS=false \
-	LOGBACK_APPENDER=STDOUT \
 	java -jar target/client-service*.jar -disableTelemetry=true --server.port=8080 -tracing=jaeger
 
 catalog-local: install
-    SANITIZE_EXCEPTIONS=false \
-    LOGBACK_APPENDER=STDOUT \
-    java -jar target/client-service*.jar -disableTelemetry=true --server.port=8080 --eva.catalog=http://localhost:3000
+	SANITIZE_EXCEPTIONS=false \
+	java -jar target/client-service*.jar -disableTelemetry=true --server.port=8080 --eva.catalog=http://localhost:3000
 
 ####
 # Linting and Test Recipes

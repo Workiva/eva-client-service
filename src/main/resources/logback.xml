@@ -28,6 +28,6 @@
     <logger name="com.workiva.eva.clientservice.*" level="${LOGBACK_LOG_LEVEL:-INFO}" />
 
     <root level="${LOGBACK_LOG_LEVEL:-INFO}">
-        <appender-ref ref="${LOGBACK_APPENDER:-SOCKET}" />
+        <appender-ref ref="${LOGBACK_APPENDER:-STDOUT}" />
     </root>
 </configuration>
