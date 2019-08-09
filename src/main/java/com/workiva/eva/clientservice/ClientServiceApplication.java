@@ -33,7 +33,10 @@ public class ClientServiceApplication {
    * @param args The command line arguments.
    */
   public static void main(String[] args) {
-    boolean telemetryDisabled = false;
+    
+    
+    
+    boolean telemetryDisabled =                   false;
     // TODO:
     // https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/core/env/CommandLinePropertySource.html
     for (String arg : args) {
