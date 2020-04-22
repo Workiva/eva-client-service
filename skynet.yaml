@@ -1,6 +1,6 @@
 name: eva_client_service_eva_functional_tests
 
-image: drydock.workiva.net/workiva/smithy-runner-generator:340896
+image: drydock.workiva.net/workiva/skynet-images:2220049
 
 contact: Daniel Harasymiw <daniel.harasymiw@workiva.com>
 
@@ -16,6 +16,7 @@ requires:
   Workiva/eva: docker
 
 scripts:
+  - node --version
   # Add nvm-npm package directory to path
   - export PATH=$PATH:$(npm get prefix)/bin
   # Grab Newman to run

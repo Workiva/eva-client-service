@@ -1,4 +1,4 @@
-# ![](docs/EVA-50x50.png) Eva Client Service [![codecov](https://codecov.workiva.net/gh/Workiva/eva-client-service/branch/master/graph/badge.svg)](https://codecov.workiva.net/gh/Workiva/eva-client-service)
+# ![](docs/EVA-50x50.png) Eva Client Service
 
 The Eva client service is an Eva peer which exposes Eva functionality to other languages through a _REST_ interface. This model allows developers to work with EVA in non-JVM languages, removes the need to deploy a peer cluster and uncouple their database from their applications. The service also allows for multi-database queries, cross database referencing and prevents multiple round trips for these types of calls. Furthermore, only one service will need to be scaled, and the interface is standard so multiple services can utilize the same client service.
 

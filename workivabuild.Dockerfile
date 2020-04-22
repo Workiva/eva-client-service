@@ -54,9 +54,6 @@ RUN cd ./docs/swagger \
 ARG BUILD_ARTIFACTS_DOCUMENTATION=/build/eva-client-service-api-docs.tar.gz
 
 ## Upload Code-Coverage Report
-ARG GIT_COMMIT
-ARG GIT_BRANCH
-RUN ./scripts/ci/codecov.sh
 ARG BUILD_ARTIFACTS_TEST_REPORTS=/build/target/surefire-reports/TEST-*.xml
 
 ## Produce Final JAR, AOT Compile EVA
